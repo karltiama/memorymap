@@ -1,8 +1,11 @@
-export type MarkerData = {
-  id: number;
-  longitude: number;
-  latitude: number;
+export type MemoryData = {
+  id: string;
   title: string;
-  summary: string;
-  memoryId: string;
+  description: string;
+  latitude: number;
+  longitude: number;
+  image_url?: string;
+  address?: string;
+  tags?: string[];
+  // Add other fields as necessary
 };

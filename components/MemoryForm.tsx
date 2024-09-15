@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
-import { z } from 'zod'
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Button } from "@/components/ui/button"
+import React, { useState, useEffect } from 'react';
+import { z } from 'zod';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
 // Define the Zod schema
 const formSchema = z.object({
@@ -16,11 +16,16 @@ const formSchema = z.object({
   tags: z.string(),
   latitude: z.number().nullable(),
   longitude: z.number().nullable(),
+  image_url: z.string().url().nullable(),
 })
 
 type FormData = z.infer<typeof formSchema>
 
-export function MemoryForm() {
+interface MemoryFormProps {
+  selectedLocation: { longitude: number; latitude: number } | null;
+}
+
+export function MemoryForm({ selectedLocation }: MemoryFormProps) {
   const [formData, setFormData] = useState<FormData>({
     title: '',
     description: '',
@@ -28,19 +33,56 @@ export function MemoryForm() {
     tags: '',
     latitude: null,
     longitude: null,
+    image_url: null,
   })
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({})
+
+  useEffect(() => {
+    if (selectedLocation) {
+      setFormData(prevData => ({
+        ...prevData,
+        latitude: selectedLocation.latitude,
+        longitude: selectedLocation.longitude,
+      }));
+    }
+  }, [selectedLocation]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
       const validatedData = formSchema.parse(formData)
-      // Handle form submission logic here
-      console.log(validatedData)
+      
+      const response = await fetch('/api/memories', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(validatedData),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to submit memory')
+      }
+
+      const result = await response.json()
+      console.log('Memory submitted successfully:', result)
+      
+      // Reset form or show success message
+      setFormData({
+        title: '',
+        description: '',
+        address: '',
+        tags: '',
+        latitude: null,
+        longitude: null,
+        image_url: null,
+      })
       setErrors({})
     } catch (error) {
       if (error instanceof z.ZodError) {
         setErrors(error.flatten().fieldErrors as Partial<Record<keyof FormData, string>>)
+      } else {
+        console.error('Error submitting memory:', error)
       }
     }
   }

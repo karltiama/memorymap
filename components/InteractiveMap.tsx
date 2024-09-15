@@ -1,33 +1,41 @@
 'use client'
 
-import React, { useState, useCallback, useEffect } from 'react'
-import Map, { Marker } from 'react-map-gl'
+import React, { useState, useEffect } from 'react'
 import "mapbox-gl/dist/mapbox-gl.css";
-import { Popup } from 'react-map-gl';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { FaTimes } from 'react-icons/fa'; // Import the X icon
-import Link from 'next/link';
-
-
 
 
 import MapContainer from './MapContainer';
 import CitySearch from './CitySearch';
-import { MarkerData } from '@/types/types';
+import { MemoryData } from '@/types/types';
 
 interface InteractiveMapProps {
   onLocationSelect?: (lng: number, lat: number) => void;
 }
 
 const InteractiveMap: React.FC<InteractiveMapProps> = ({ onLocationSelect }) => {
-  // Hard-coded markers
-  const markers: MarkerData[] = [
-    { id: 1, longitude: -71.0589, latitude: 42.3601, title: "Boston", summary: "Visit to Fenway Park", memoryId: "boston-001" },
-    { id: 2, longitude: -74.0060, latitude: 40.7128, title: "New York", summary: "Broadway show and Central Park picnic", memoryId: "nyc-001" },
-    { id: 3, longitude: -87.6298, latitude: 41.8781, title: "Chicago", summary: "Visit to the Art Institute", memoryId: "chicago-001" },
-    { id: 4, longitude: -79.5555, latitude: 43.7178, title: "Etobicoke", summary: "Visit to the great Jomai Omandam", memoryId: "etobicoke-001" },
-  ];
+  const [memories, setMemories] = useState<MemoryData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchMemories = async () => {
+      try {
+        const response = await fetch('/api/memories');
+        if (!response.ok) {
+          throw new Error('Failed to fetch memories');
+        }
+        const data = await response.json();
+        setMemories(data);
+      } catch (err) {
+        setError('Failed to load memories');
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMemories();
+  }, []);
 
   const handleCitySubmit = async (city: string) => {
     try {
@@ -44,10 +52,13 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ onLocationSelect }) => 
     }
   };
 
+  if (isLoading) return <div>Loading memories...</div>;
+  if (error) return <div>Error: {error}</div>;
+
   return (
     <div>
       <CitySearch onCitySubmit={handleCitySubmit} />
-      <MapContainer markers={markers} onLocationSelect={onLocationSelect} />
+      <MapContainer memories={memories} onLocationSelect={onLocationSelect} />
     </div>
   );
 };
