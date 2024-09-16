@@ -2,11 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { z } from 'zod';
+import { useRouter } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { createClient } from '@/utils/supabase/client';
 
 // Define the Zod schema
 const formSchema = z.object({
@@ -26,6 +28,7 @@ interface MemoryFormProps {
 }
 
 export function MemoryForm({ selectedLocation }: MemoryFormProps) {
+  const router = useRouter();
   const [formData, setFormData] = useState<FormData>({
     title: '',
     description: '',
@@ -34,8 +37,9 @@ export function MemoryForm({ selectedLocation }: MemoryFormProps) {
     latitude: null,
     longitude: null,
     image_url: null,
-  })
-  const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({})
+  });
+  const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (selectedLocation) {
@@ -48,52 +52,46 @@ export function MemoryForm({ selectedLocation }: MemoryFormProps) {
   }, [selectedLocation]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
+    setIsSubmitting(true);
+    console.log('Submitting form...', formData);
+
     try {
-      const validatedData = formSchema.parse(formData)
+      const validatedData = formSchema.parse(formData);
+      console.log('Data validated successfully:', validatedData);
       
-      const response = await fetch('/api/memories', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(validatedData),
-      })
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from('memories')
+        .insert([validatedData])
+        .select();
 
-      if (!response.ok) {
-        throw new Error('Failed to submit memory')
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
       }
 
-      const result = await response.json()
-      console.log('Memory submitted successfully:', result)
+      console.log('Memory submitted successfully:', data);
       
-      // Reset form or show success message
-      setFormData({
-        title: '',
-        description: '',
-        address: '',
-        tags: '',
-        latitude: null,
-        longitude: null,
-        image_url: null,
-      })
-      setErrors({})
+      // Redirect to dashboard
+      console.log('Redirecting to dashboard...');
+      router.push('/dashboard');
     } catch (error) {
+      console.error('Error in form submission:', error);
       if (error instanceof z.ZodError) {
-        setErrors(error.flatten().fieldErrors as Partial<Record<keyof FormData, string>>)
+        console.log('Zod validation error:', error.flatten().fieldErrors);
+        setErrors(error.flatten().fieldErrors as Partial<Record<keyof FormData, string>>);
       } else {
-        console.error('Error submitting memory:', error)
+        console.error('Unexpected error:', error);
       }
+    } finally {
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value })
-  }
-
-  const handleLocationSelect = (lng: number, lat: number) => {
-    setFormData({ ...formData, longitude: lng, latitude: lat })
-  }
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
 
   return (
     <Card>
@@ -125,37 +123,18 @@ export function MemoryForm({ selectedLocation }: MemoryFormProps) {
             )}
           </div>
           <div className="grid gap-3">
-            <div className="flex items-center justify-center w-full">
-              <label
-                htmlFor="dropzone-file"
-                className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
-              >
-                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                  <div className="w-10 h-10 text-gray-400" />
-                  <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                    <span className="font-semibold">Click to upload</span> or drag and drop
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    SVG, PNG, JPG or GIF (MAX. 800x400px)
-                  </p>
-                </div>
-                <input id="dropzone-file" type="file" className="hidden" />
-              </label>
-            </div>
-          </div>
-          <div className="grid gap-3">
             <Label htmlFor="tags">Tags</Label>
             <Input id="tags" type="text" placeholder="Add tags separated by commas" onChange={handleChange} value={formData.tags} />
             <p className="text-sm text-muted-foreground">
               Add keywords or people to help others find your memory.
             </p>
           </div>
-          <Button type="submit" className="w-full">
-            Submit Memory
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {isSubmitting ? 'Submitting...' : 'Submit Memory'}
           </Button>
         </form>
       </CardContent>
     </Card>
-  )
+  );
 }
 

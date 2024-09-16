@@ -57,7 +57,6 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ onLocationSelect }) => 
 
   return (
     <div>
-      <CitySearch onCitySubmit={handleCitySubmit} />
       <MapContainer memories={memories} onLocationSelect={onLocationSelect} />
     </div>
   );
