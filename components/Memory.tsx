@@ -10,15 +10,14 @@ interface MemoryProps {
 }
 
 const Memory: React.FC<MemoryProps> = ({ memory }) => {
-  // Function to safely get tags as an array
-  const getTags = (): string[] => {
-    if (!memory.tags) return [];
-    if (Array.isArray(memory.tags)) return memory.tags;
-    if (typeof memory.tags === 'string') return memory.tags.split(',').map(tag => tag.trim());
-    return [];
+  // Function to handle different tag formats
+  const getTags = (tags: string | string[] | null): string[] => {
+    if (!tags) return [];
+    if (typeof tags === 'string') return tags.split(',').map(tag => tag.trim());
+    return tags;
   };
 
-  const tags = getTags();
+  const tags = getTags(memory.tags);
 
   return (
     <div className="group relative rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-[1.02]">

@@ -5,7 +5,6 @@ import "mapbox-gl/dist/mapbox-gl.css";
 
 
 import MapContainer from './MapContainer';
-import CitySearch from './CitySearch';
 import { MemoryData } from '@/types/types';
 
 interface InteractiveMapProps {
@@ -55,9 +54,20 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ onLocationSelect }) => 
   if (isLoading) return <div>Loading memories...</div>;
   if (error) return <div>Error: {error}</div>;
 
+  // Add this line to get the Mapbox access token
+  const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
+
+  // Check if the token is available
+  if (!mapboxToken) return <div>Error: Mapbox access token is missing</div>;
+
   return (
     <div>
-      <MapContainer memories={memories} onLocationSelect={onLocationSelect} />
+      
+      <MapContainer 
+        memories={memories} 
+        onLocationSelect={onLocationSelect}
+        mapboxToken={mapboxToken} // Pass the token to MapContainer
+      />
     </div>
   );
 };

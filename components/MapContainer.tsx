@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import Map, { Marker } from 'react-map-gl';
 import "mapbox-gl/dist/mapbox-gl.css";
 import { MemoryData } from '@/types/types';
@@ -6,9 +6,10 @@ import { MemoryData } from '@/types/types';
 interface MapContainerProps {
   memories: MemoryData[];
   onLocationSelect?: (lng: number, lat: number) => void;
+  mapboxToken: string;
 }
 
-const MapContainer: React.FC<MapContainerProps> = ({ memories, onLocationSelect }) => {
+const MapContainer: React.FC<MapContainerProps> = ({ memories, onLocationSelect, mapboxToken }) => {
   const [viewState, setViewState] = useState({
     longitude: -98.5795,
     latitude: 39.8283,
@@ -24,13 +25,6 @@ const MapContainer: React.FC<MapContainerProps> = ({ memories, onLocationSelect 
     }
   }, [onLocationSelect]);
 
-  // Use this effect to update parent component, not viewState
-  useEffect(() => {
-    if (selectedLocation && onLocationSelect) {
-      onLocationSelect(selectedLocation.longitude, selectedLocation.latitude);
-    }
-  }, [selectedLocation, onLocationSelect]);
-
   return (
     <Map
       {...viewState}
@@ -38,6 +32,7 @@ const MapContainer: React.FC<MapContainerProps> = ({ memories, onLocationSelect 
       style={{width: '100%', height: 400}}
       mapStyle="mapbox://styles/mapbox/streets-v11"
       onClick={handleClick}
+      mapboxAccessToken={mapboxToken}
     >
       {memories.map((memory) => (
         <Marker 

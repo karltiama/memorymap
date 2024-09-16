@@ -1,11 +1,9 @@
-export type MemoryData = {
+export interface MemoryData {
   id: string;
   title: string;
   description: string;
   latitude: number;
   longitude: number;
-  image_url?: string;
-  address?: string;
-  tags?: string[];
-  // Add other fields as necessary
-};
+  tags: string[]; // Changed from string to string[]
+  // ... other fields ...
+}

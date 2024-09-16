@@ -54,16 +54,38 @@ export function MemoryForm({ selectedLocation }: MemoryFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    console.log('Submitting form...', formData);
 
     try {
       const validatedData = formSchema.parse(formData);
-      console.log('Data validated successfully:', validatedData);
       
       const supabase = createClient();
+      
+      // Get the current user
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error('No authenticated user found');
+      }
+
+      // Process tags: split by comma and trim whitespace
+      const processedTags = validatedData.tags
+        ? validatedData.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '')
+        : [];
+
+      // Add the user_id to the validated data and process tags
+      const dataToSubmit = {
+        ...validatedData,
+        user_id: user.id,
+        tags: processedTags, // Use the processed tags array
+        latitude: validatedData.latitude ? Number(validatedData.latitude) : null,
+        longitude: validatedData.longitude ? Number(validatedData.longitude) : null,
+      };
+
+      console.log('Submitting data:', dataToSubmit);
+
       const { data, error } = await supabase
         .from('memories')
-        .insert([validatedData])
+        .insert([dataToSubmit])
         .select();
 
       if (error) {
@@ -74,8 +96,8 @@ export function MemoryForm({ selectedLocation }: MemoryFormProps) {
       console.log('Memory submitted successfully:', data);
       
       // Redirect to dashboard
-      console.log('Redirecting to dashboard...');
       router.push('/dashboard');
+
     } catch (error) {
       console.error('Error in form submission:', error);
       if (error instanceof z.ZodError) {
