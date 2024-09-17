@@ -139,7 +139,7 @@ export function MemoryForm({ selectedLocation }: MemoryFormProps) {
             {errors.address && <p className="text-red-500">{errors.address}</p>}
           </div>
           <div className="grid gap-3">
-            <Label>Location</Label>
+            <Label>Latitude and Longitude</Label>
             {formData.latitude && formData.longitude && (
               <p>Selected: {formData.latitude.toFixed(4)}, {formData.longitude.toFixed(4)}</p>
             )}
