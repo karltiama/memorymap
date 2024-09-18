@@ -9,12 +9,17 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { createClient } from '@/utils/supabase/client';
+import { DatePicker } from "@/components/DatePicker";
+import { format } from "date-fns";
 
 // Define the Zod schema
 const formSchema = z.object({
   title: z.string().min(1, 'Title is required').max(100, 'Title must be 100 characters or less'),
   description: z.string().min(1, 'Description is required').max(1000, 'Description must be 1000 characters or less'),
   address: z.string().min(1, 'Address is required'),
+  memory_date: z.date({
+    required_error: "A date is required.",
+  }),
   tags: z.string(),
   latitude: z.number().nullable(),
   longitude: z.number().nullable(),
@@ -33,6 +38,7 @@ export function MemoryForm({ selectedLocation }: MemoryFormProps) {
     title: '',
     description: '',
     address: '',
+    memory_date: new Date(),
     tags: '',
     latitude: null,
     longitude: null,
@@ -51,6 +57,10 @@ export function MemoryForm({ selectedLocation }: MemoryFormProps) {
     }
   }, [selectedLocation]);
 
+  const handleDateChange = (date: Date | undefined) => {
+    setFormData(prev => ({ ...prev, memory_date: date || prev.memory_date }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -58,6 +68,12 @@ export function MemoryForm({ selectedLocation }: MemoryFormProps) {
     try {
       const validatedData = formSchema.parse(formData);
       
+      // Format the date to ISO string
+      const formattedData = {
+        ...validatedData,
+        memory_date: validatedData.memory_date ? format(validatedData.memory_date, "yyyy-MM-dd") : null,
+      };
+
       const supabase = createClient();
       
       // Get the current user
@@ -74,7 +90,7 @@ export function MemoryForm({ selectedLocation }: MemoryFormProps) {
 
       // Add the user_id to the validated data and process tags
       const dataToSubmit = {
-        ...validatedData,
+        ...formattedData,
         user_id: user.id,
         tags: processedTags, // Use the processed tags array
         latitude: validatedData.latitude ? Number(validatedData.latitude) : null,
@@ -150,6 +166,11 @@ export function MemoryForm({ selectedLocation }: MemoryFormProps) {
             <p className="text-sm text-muted-foreground">
               Add keywords or people to help others find your memory.
             </p>
+          </div>
+          <div className="grid gap-3">
+            <Label htmlFor="date">Date</Label>
+            <DatePicker date={formData.memory_date} setDate={handleDateChange} />
+            {errors.memory_date && <p className="text-red-500">{errors.memory_date}</p>}
           </div>
           <Button type="submit" className="w-full" disabled={isSubmitting}>
             {isSubmitting ? 'Submitting...' : 'Submit Memory'}

@@ -1,7 +1,8 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import Map, { Marker, NavigationControl } from 'react-map-gl';
+import Map, { Marker, NavigationControl, Popup } from 'react-map-gl';
 import "mapbox-gl/dist/mapbox-gl.css";
 import { MemoryData } from '@/types/types';
+import MemoryPopup from './MemoryPopup';
 
 interface MapContainerProps {
   memories: MemoryData[];
@@ -15,17 +16,57 @@ const MapContainer: React.FC<MapContainerProps> = ({ memories, onLocationSelect,
     latitude: 39.8283,
     zoom: 3,
   });
+  const [selectedMemory, setSelectedMemory] = useState<MemoryData | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<{longitude: number; latitude: number} | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResult, setSearchResult] = useState<{ longitude: number; latitude: number } | null>(null);
 
+  const MIN_ZOOM_FOR_NEW_MEMORY = 10;
+  const NEARBY_THRESHOLD = 0.01;
+  const FREE_PLACEMENT_ZOOM = 16;
+
   const handleClick = useCallback((event: any) => {
     const { lng, lat } = event.lngLat;
-    setSelectedLocation({ longitude: lng, latitude: lat });
-    if (onLocationSelect) {
-      onLocationSelect(lng, lat);
+    
+    if (viewState.zoom >= FREE_PLACEMENT_ZOOM) {
+      // Allow free placement at high zoom levels
+      setSelectedLocation({ longitude: lng, latitude: lat });
+      if (onLocationSelect) {
+        onLocationSelect(lng, lat);
+      }
+      return;
     }
-  }, [onLocationSelect]);
+
+    if (viewState.zoom < MIN_ZOOM_FOR_NEW_MEMORY) {
+      console.log("Zoom in to add a new memory");
+      return;
+    }
+
+    // Check for nearby memories only if not in free placement mode
+    const nearbyMemory = memories.find(memory => 
+      Math.abs(memory.longitude - lng) < NEARBY_THRESHOLD &&
+      Math.abs(memory.latitude - lat) < NEARBY_THRESHOLD
+    );
+
+    if (nearbyMemory) {
+      setSelectedMemory(nearbyMemory);
+    } else {
+      setSelectedLocation({ longitude: lng, latitude: lat });
+      if (onLocationSelect) {
+        onLocationSelect(lng, lat);
+      }
+    }
+  }, [onLocationSelect, memories, viewState.zoom]);
+
+  const handleMemoryClick = useCallback((memory: MemoryData) => {
+    setSelectedMemory(memory);
+    // Clear the selected location to prevent adding a new marker
+    setSelectedLocation(null);
+  }, []);
+
+  const handlePopupClose = useCallback(() => {
+    setSelectedMemory(null);
+  }, []);
 
   const handleCitySearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,8 +89,12 @@ const MapContainer: React.FC<MapContainerProps> = ({ memories, onLocationSelect,
     }
   };
 
+  const handleViewStateChange = useCallback((newViewState: any) => {
+    setViewState(newViewState);
+  }, []);
+
   return (
-    <div className="relative w-full h-[400px]">
+    <div className="relative w-full h-[600px]">
       <div className="absolute top-2 left-2 z-10 bg-white p-2 rounded shadow-md">
         <form onSubmit={handleCitySearch} className="flex">
           <input
@@ -66,19 +111,31 @@ const MapContainer: React.FC<MapContainerProps> = ({ memories, onLocationSelect,
       </div>
       <Map
         {...viewState}
-        onMove={evt => setViewState(evt.viewState)}
+        onMove={evt => handleViewStateChange(evt.viewState)}
         style={{width: '100%', height: '100%'}}
         mapStyle="mapbox://styles/mapbox/streets-v12"
         onClick={handleClick}
         mapboxAccessToken={mapboxToken}
       >
         <NavigationControl position="top-right" />
+        
+        {/* Map Stats */}
+        <div className="absolute top-2 right-14 bg-white p-2 rounded shadow-md text-xs">
+          <div>Longitude: {viewState.longitude.toFixed(4)}</div>
+          <div>Latitude: {viewState.latitude.toFixed(4)}</div>
+          <div>Zoom: {viewState.zoom.toFixed(2)}</div>
+        </div>
+
         {memories.map((memory) => (
           <Marker 
             key={memory.id}
             longitude={memory.longitude} 
             latitude={memory.latitude}
             color="red"
+            onClick={(e) => {
+              e.originalEvent.stopPropagation();
+              handleMemoryClick(memory);
+            }}
           />
         ))}
         {selectedLocation && (
@@ -95,7 +152,20 @@ const MapContainer: React.FC<MapContainerProps> = ({ memories, onLocationSelect,
             color="green"
           />
         )}
+        {selectedMemory && (
+          <MemoryPopup memory={selectedMemory} onClose={handlePopupClose} />
+        )}
       </Map>
+      {viewState.zoom < MIN_ZOOM_FOR_NEW_MEMORY && (
+        <div className="absolute bottom-4 left-4 bg-white p-2 rounded shadow">
+          Zoom in to add a new memory
+        </div>
+      )}
+      {viewState.zoom >= FREE_PLACEMENT_ZOOM && (
+        <div className="absolute bottom-4 left-4 bg-white p-2 rounded shadow">
+          You can now place a memory anywhere on the map
+        </div>
+      )}
     </div>
   );
 };

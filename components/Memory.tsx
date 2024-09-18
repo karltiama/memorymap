@@ -4,6 +4,12 @@ import { MemoryData } from '@/types/types';
 import StaticMap from './StaticMap';
 import { Badge } from "@/components/ui/badge";
 import { Plus, Trash2 } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface MemoryProps {
   memory: MemoryData;
@@ -30,14 +36,32 @@ const Memory: React.FC<MemoryProps> = ({ memory }) => {
         ))}
       </div>
 
-      {/* Action Icons */}
-      <div className="absolute top-2 right-2 z-10 flex gap-2">
-        <button className="p-1 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors">
-          <Plus size={20} className="text-gray-600" />
-        </button>
-        <button className="p-1 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors">
-          <Trash2 size={20} className="text-gray-600" />
-        </button>
+      {/* Action Icons with Tooltips */}
+      <div className="absolute top-2 right-2 z-20 flex gap-2">
+        <TooltipProvider>
+          <Tooltip delayDuration={100}>
+            <TooltipTrigger asChild>
+              <button className="p-1 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors">
+                <Plus size={20} className="text-gray-600" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="left" className="z-30">
+              <p>Add to Collection</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <TooltipProvider>
+          <Tooltip delayDuration={100}>
+            <TooltipTrigger asChild>
+              <button className="p-1 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors">
+                <Trash2 size={20} className="text-gray-600" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="left" className="z-30">
+              <p>Delete Memory</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="relative h-[300px] w-full">

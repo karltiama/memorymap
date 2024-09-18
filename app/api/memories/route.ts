@@ -25,7 +25,7 @@ export async function POST(request: Request) {
   const supabase = createClient()
 
   try {
-    const { title, description, address, latitude, longitude, image_url, tags } = await request.json()
+    const { title, description, address, latitude, longitude, image_url, tags, memory_date } = await request.json()
 
     // Get the user ID from the session
     const { data: { user } } = await supabase.auth.getUser()
@@ -44,7 +44,8 @@ export async function POST(request: Request) {
         latitude,
         longitude,
         image_url,
-        tags
+        tags,
+        memory_date // This will now be a formatted date string
       })
       .select()
 

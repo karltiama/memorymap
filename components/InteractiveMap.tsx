@@ -34,18 +34,23 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ onLocationSelect }) => 
     fetchMemories();
   }, []);
 
-  if (isLoading) return <div>Loading memories...</div>;
-  if (error) return <div>Error: {error}</div>;
-
   const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
   if (!mapboxToken) return <div>Error: Mapbox access token is missing</div>;
 
   return (
-    <MapContainer 
-      memories={memories} 
-      onLocationSelect={onLocationSelect}
-      mapboxToken={mapboxToken}
-    />
+    <>
+      <MapContainer 
+        memories={isLoading ? [] : memories} 
+        onLocationSelect={onLocationSelect}
+        mapboxToken={mapboxToken}
+      />
+      {isLoading && (
+        <div className="absolute top-0 left-0 right-0 bg-white bg-opacity-80 p-4 text-center">
+          Loading memories...
+        </div>
+      )}
+      {error && <div className="text-red-500">Error: {error}</div>}
+    </>
   );
 };
 
