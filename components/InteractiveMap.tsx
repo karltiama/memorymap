@@ -38,7 +38,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ onLocationSelect }) => 
   if (!mapboxToken) return <div>Error: Mapbox access token is missing</div>;
 
   return (
-    <>
+    <div className="h-full w-full relative">
       <MapContainer 
         memories={isLoading ? [] : memories} 
         onLocationSelect={onLocationSelect}
@@ -49,8 +49,8 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ onLocationSelect }) => 
           Loading memories...
         </div>
       )}
-      {error && <div className="text-red-500">Error: {error}</div>}
-    </>
+      {error && <div className="absolute top-0 left-0 right-0 bg-red-500 text-white p-4 text-center">Error: {error}</div>}
+    </div>
   );
 };
 

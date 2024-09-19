@@ -132,52 +132,54 @@ export function MemoryForm({ selectedLocation }: MemoryFormProps) {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Share a Memory</CardTitle>
-        <CardDescription>Add a new memory to the interactive map.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="grid gap-6">
-          <div className="grid gap-3">
-            <Label htmlFor="title">Title</Label>
-            <Input id="title" type="text" placeholder="My Vacation in Hawaii" onChange={handleChange} value={formData.title} />
-            {errors.title && <p className="text-red-500">{errors.title}</p>}
-          </div>
-          <div className="grid gap-3">
-            <Label htmlFor="description">Description</Label>
-            <Textarea id="description" placeholder="Tell us about your memory..." className="min-h-[120px]" onChange={handleChange} value={formData.description} />
-            {errors.description && <p className="text-red-500">{errors.description}</p>}
-          </div>
-          <div className="grid gap-3">
-            <Label htmlFor="address">Address</Label>
-            <Input id="address" type="text" placeholder="123 Main St, Anytown USA" onChange={handleChange} value={formData.address} />
-            {errors.address && <p className="text-red-500">{errors.address}</p>}
-          </div>
-          <div className="grid gap-3">
-            <Label>Latitude and Longitude</Label>
-            {formData.latitude && formData.longitude && (
-              <p>Selected: {formData.latitude.toFixed(4)}, {formData.longitude.toFixed(4)}</p>
-            )}
-          </div>
-          <div className="grid gap-3">
-            <Label htmlFor="tags">Tags</Label>
-            <Input id="tags" type="text" placeholder="Add tags separated by commas" onChange={handleChange} value={formData.tags} />
-            <p className="text-sm text-muted-foreground">
-              Add keywords or people to help others find your memory.
-            </p>
-          </div>
-          <div className="grid gap-3">
-            <Label htmlFor="date">Date</Label>
-            <DatePicker date={formData.memory_date} setDate={handleDateChange} />
-            {errors.memory_date && <p className="text-red-500">{errors.memory_date}</p>}
-          </div>
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? 'Submitting...' : 'Submit Memory'}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+    <div className="h-full overflow-y-auto">
+      <Card className="h-full">
+        <CardHeader>
+          <CardTitle>Share a Memory</CardTitle>
+          <CardDescription>Add a new memory to the interactive map.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="grid gap-6">
+            <div className="grid gap-3">
+              <Label htmlFor="title">Title</Label>
+              <Input id="title" type="text" placeholder="My Vacation in Hawaii" onChange={handleChange} value={formData.title} />
+              {errors.title && <p className="text-red-500">{errors.title}</p>}
+            </div>
+            <div className="grid gap-3">
+              <Label htmlFor="description">Description</Label>
+              <Textarea id="description" placeholder="Tell us about your memory..." className="min-h-[120px]" onChange={handleChange} value={formData.description} />
+              {errors.description && <p className="text-red-500">{errors.description}</p>}
+            </div>
+            <div className="grid gap-3">
+              <Label htmlFor="address">Address</Label>
+              <Input id="address" type="text" placeholder="123 Main St, Anytown USA" onChange={handleChange} value={formData.address} />
+              {errors.address && <p className="text-red-500">{errors.address}</p>}
+            </div>
+            <div className="grid gap-3">
+              <Label>Latitude and Longitude</Label>
+              {formData.latitude && formData.longitude && (
+                <p>Selected: {formData.latitude.toFixed(4)}, {formData.longitude.toFixed(4)}</p>
+              )}
+            </div>
+            <div className="grid gap-3">
+              <Label htmlFor="tags">Tags</Label>
+              <Input id="tags" type="text" placeholder="Add tags separated by commas" onChange={handleChange} value={formData.tags} />
+              <p className="text-sm text-muted-foreground">
+                Add keywords or people to help others find your memory.
+              </p>
+            </div>
+            <div className="grid gap-3">
+              <Label htmlFor="date">Date</Label>
+              <DatePicker date={formData.memory_date} setDate={handleDateChange} />
+              {errors.memory_date && <p className="text-red-500">{errors.memory_date}</p>}
+            </div>
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? 'Submitting...' : 'Submit Memory'}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
 

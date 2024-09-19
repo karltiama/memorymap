@@ -12,9 +12,9 @@ interface MapContainerProps {
 
 const MapContainer: React.FC<MapContainerProps> = ({ memories, onLocationSelect, mapboxToken }) => {
   const [viewState, setViewState] = useState({
-    longitude: -98.5795,
-    latitude: 39.8283,
-    zoom: 3,
+    longitude: -83.5795,
+    latitude: 43.8283,
+    zoom: 5,
   });
   const [selectedMemory, setSelectedMemory] = useState<MemoryData | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<{longitude: number; latitude: number} | null>(null);
@@ -94,7 +94,7 @@ const MapContainer: React.FC<MapContainerProps> = ({ memories, onLocationSelect,
   }, []);
 
   return (
-    <div className="relative w-full h-[600px]">
+    <div className="relative w-full h-full flex flex-col">
       <div className="absolute top-2 left-2 z-10 bg-white p-2 rounded shadow-md">
         <form onSubmit={handleCitySearch} className="flex">
           <input

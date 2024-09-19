@@ -58,6 +58,13 @@ export function DatePicker({ date, setDate }: DatePickerProps) {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
+        <Calendar
+          mode="single"
+          selected={date}
+          onSelect={setDate}
+          initialFocus
+          defaultMonth={date || new Date(selectedYear, 0)}
+        />
         <div className="flex flex-col items-center p-2">
           <p className="text-sm text-muted-foreground mb-2">Select a different year</p>
           <Select onValueChange={handleYearChange} value={selectedYear.toString()}>
@@ -73,13 +80,6 @@ export function DatePicker({ date, setDate }: DatePickerProps) {
             </SelectContent>
           </Select>
         </div>
-        <Calendar
-          mode="single"
-          selected={date}
-          onSelect={setDate}
-          initialFocus
-          defaultMonth={date || new Date(selectedYear, 0)}
-        />
       </PopoverContent>
     </Popover>
   )

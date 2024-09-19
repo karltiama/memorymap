@@ -12,13 +12,13 @@ export default function NewMemoryPage() {
   }
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 h-[calc(100vh-4rem)]">
       <h1 className="text-2xl font-bold mb-4">Create a New Memory</h1>
-      <div className="grid gap-6 md:grid-cols-2">
-        <div className="h-[80vh]">
+      <div className="flex h-[calc(100%-2rem)] gap-4">
+        <div className="w-[70%] h-full">
           <InteractiveMap onLocationSelect={handleLocationSelect} />
         </div>
-        <div>
+        <div className="w-[30%] h-full overflow-y-auto">
           <MemoryForm selectedLocation={selectedLocation} />
         </div>
       </div>
