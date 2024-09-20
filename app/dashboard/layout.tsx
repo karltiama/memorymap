@@ -16,9 +16,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <Sidebar 
         sidebarExpanded={sidebarExpanded} 
         setSidebarExpanded={setSidebarExpanded}
-        setView={setView} // Pass the setView function to the Sidebar
       />
-      <main className={`flex-1 p-4 overflow-y-auto ${sidebarExpanded ? 'ml-64' : 'ml-20'}`} style={{ height: 'calc(100vh - 0px)' }}>
+      <main className="flex-1 overflow-y-auto">
         {children} {/* Render the child pages here */}
       </main>
     </div>
