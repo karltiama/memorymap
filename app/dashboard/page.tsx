@@ -23,18 +23,20 @@ export default async function Dashboard() {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
-      <p className="mb-4">User email: {user.email}</p>
-      <Link href="/memories/new">
-        <Button className="mb-6">Create New Memory</Button>
-      </Link>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <Link href="/memories/new">
+          <Button>Create New Memory</Button>
+        </Link>
+      </div>
       
-      {memoriesError && <p className="text-red-500">Error loading memories. Please try again later.</p>}
+      {memoriesError && (
+        <p className="text-destructive">Error loading memories. Please try again later.</p>
+      )}
       {memories && memories.length > 0 ? (
         <MemoryList memories={memories as MemoryData[]} />
       ) : (
-        <p>You haven't created any memories yet.</p>
+        <p className="text-muted-foreground">You haven't created any memories yet.</p>
       )}
     </div>
   )

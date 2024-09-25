@@ -2,23 +2,22 @@
 
 import { useState } from 'react';
 import Sidebar from '@/components/Sidebar';
+import { DashboardHeader } from '@/components/DashboardHeader';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const [sidebarExpanded, setSidebarExpanded] = useState(true); // State for sidebar
-
-  const setView = (view: string) => {
-    // Handle view changes if necessary
-    console.log(`Navigating to ${view}`);
-  };
+  const [sidebarExpanded, setSidebarExpanded] = useState(true);
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-background">
       <Sidebar 
         sidebarExpanded={sidebarExpanded} 
         setSidebarExpanded={setSidebarExpanded}
       />
       <main className="flex-1 overflow-y-auto">
-        {children} {/* Render the child pages here */}
+        <DashboardHeader />
+        <div className="p-8">
+          {children}
+        </div>
       </main>
     </div>
   );

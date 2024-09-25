@@ -10,6 +10,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { AddToCollectionPopover } from './AddToCollectionPopover';
 
 interface MemoryProps {
   memory: MemoryData;
@@ -40,11 +41,13 @@ const Memory: React.FC<MemoryProps> = ({ memory }) => {
       <div className="absolute top-2 right-2 z-20 flex gap-2">
         <TooltipProvider>
           <Tooltip delayDuration={100}>
-            <TooltipTrigger asChild>
-              <button className="p-1 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors">
-                <Plus size={20} className="text-gray-600" />
-              </button>
-            </TooltipTrigger>
+            <AddToCollectionPopover memoryId={memory.id}>
+              <TooltipTrigger asChild>
+                <button className="p-1 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors">
+                  <Plus size={20} className="text-gray-600" />
+                </button>
+              </TooltipTrigger>
+            </AddToCollectionPopover>
             <TooltipContent side="left" className="z-30">
               <p>Add to Collection</p>
             </TooltipContent>
