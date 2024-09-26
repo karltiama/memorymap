@@ -26,7 +26,11 @@ const pageInfoMap: Record<string, PageInfo> = {
   '/dashboard/map': {
     title: 'Places',
     description: 'Explore your memories by location.'
-  }
+  },
+  '/dashboard/create': {
+    title: 'Create Memory',
+    description: 'Create a new memory to add to your collection.'
+  },
 }
 
 export function DashboardHeader() {

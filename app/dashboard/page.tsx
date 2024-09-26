@@ -24,17 +24,11 @@ export default async function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <Link href="/memories/new">
-          <Button>Create New Memory</Button>
-        </Link>
-      </div>
-      
       {memoriesError && (
         <p className="text-destructive">Error loading memories. Please try again later.</p>
       )}
       {memories && memories.length > 0 ? (
-        <MemoryList memories={memories as MemoryData[]} />
+        <MemoryList memories={memories} />
       ) : (
         <p className="text-muted-foreground">You haven't created any memories yet.</p>
       )}
