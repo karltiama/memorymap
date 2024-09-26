@@ -16,7 +16,6 @@ import { format } from "date-fns";
 const formSchema = z.object({
   title: z.string().min(1, 'Title is required').max(100, 'Title must be 100 characters or less'),
   description: z.string().min(1, 'Description is required').max(1000, 'Description must be 1000 characters or less'),
-  address: z.string().min(1, 'Address is required'),
   memory_date: z.date({
     required_error: "A date is required.",
   }),
@@ -37,7 +36,6 @@ export function MemoryForm({ selectedLocation }: MemoryFormProps) {
   const [formData, setFormData] = useState<FormData>({
     title: '',
     description: '',
-    address: '',
     memory_date: new Date(),
     tags: '',
     latitude: null,
@@ -149,11 +147,6 @@ export function MemoryForm({ selectedLocation }: MemoryFormProps) {
               <Label htmlFor="description">Description</Label>
               <Textarea id="description" placeholder="Tell us about your memory..." className="min-h-[120px]" onChange={handleChange} value={formData.description} />
               {errors.description && <p className="text-red-500">{errors.description}</p>}
-            </div>
-            <div className="grid gap-3">
-              <Label htmlFor="address">Address</Label>
-              <Input id="address" type="text" placeholder="123 Main St, Anytown USA" onChange={handleChange} value={formData.address} />
-              {errors.address && <p className="text-red-500">{errors.address}</p>}
             </div>
             <div className="grid gap-3">
               <Label>Latitude and Longitude</Label>
