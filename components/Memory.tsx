@@ -11,12 +11,49 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { AddToCollectionPopover } from './AddToCollectionPopover';
+import { useState } from 'react';
+import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface MemoryProps {
   memory: MemoryData;
+  onDelete: (id: string) => Promise<void>;
 }
 
-const Memory: React.FC<MemoryProps> = ({ memory }) => {
+const Memory: React.FC<MemoryProps> = ({ memory, onDelete }) => {
+  const { toast } = useToast();
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await onDelete(memory.id);
+      toast({
+        title: "Memory deleted",
+        description: "The memory has been successfully deleted.",
+      });
+    } catch (error) {
+      console.error('Error deleting memory:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete the memory. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   // Function to handle different tag formats
   const getTags = (tags: string | string[] | null): string[] => {
     if (!tags) return [];
@@ -55,11 +92,27 @@ const Memory: React.FC<MemoryProps> = ({ memory }) => {
         </TooltipProvider>
         <TooltipProvider>
           <Tooltip delayDuration={100}>
-            <TooltipTrigger asChild>
-              <button className="p-1 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors">
-                <Trash2 size={20} className="text-gray-600" />
-              </button>
-            </TooltipTrigger>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <button className="p-1 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors" disabled={isDeleting}>
+                  <Trash2 size={20} className="text-gray-600" />
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete your memory.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleDelete} disabled={isDeleting}>
+                    {isDeleting ? 'Deleting...' : 'Delete'}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
             <TooltipContent side="left" className="z-30">
               <p>Delete Memory</p>
             </TooltipContent>

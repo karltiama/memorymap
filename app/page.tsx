@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { MapIcon, MapPin, PenTool, Share2, Image as ImageIcon } from 'lucide-react';
+import { MapIcon, MapPin, PenTool, Share2, Image as ImageIcon, AudioLines } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import React, { useState, useCallback } from 'react';
@@ -14,7 +14,7 @@ interface MarkerType {
   longitude: number;
   latitude: number;
 }
-
+// Interactive Map Component - Make this a component
 const InteractiveMap: React.FC = () => {
   const [viewState, setViewState] = useState({
     longitude: -74.006,
@@ -84,6 +84,7 @@ const InteractiveMap: React.FC = () => {
 export default function Home() {
   return (
     <div className="flex flex-col min-h-[100dvh]">
+      {/* Header - Make this a component */}
       <header className="px-4 lg:px-6 h-14 flex items-center max-w-7xl mx-auto w-full">
         <Link href="#" className="flex items-center justify-center" prefetch={false}>
           <MapIcon className="h-6 w-6" />
@@ -155,26 +156,28 @@ export default function Home() {
               </div>
               <div className="flex flex-col justify-center space-y-4 lg:w-1/2">
                 <div className="space-y-2">
-                  <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Interactive Map Pinning</h2>
-                  <p className="max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
+                  <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center">Interactive Map Pinning</h2>
+                  <p className="max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400 text-center">
                     Easily pin your memories to specific locations on our interactive map. Zoom in, explore, and
                     rediscover your favorite moments with just a click.
                   </p>
                 </div>
-                <ul className="grid gap-2 py-4">
-                  <li className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4" />
-                    <span>Precise location tagging</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <PenTool className="h-4 w-4" />
-                    <span>Customizable pins and icons</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Share2 className="h-4 w-4" />
-                    <span>Easy sharing with friends</span>
-                  </li>
-                </ul>
+                <div className="flex justify-center"> {/* Added this wrapper div */}
+                  <ul className="grid gap-2 py-4 max-w-md"> {/* Added max-w-md for better control */}
+                    <li className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4" />
+                      <span>Precise location tagging</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <PenTool className="h-4 w-4" />
+                      <span>Customizable pins and icons</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Share2 className="h-4 w-4" />
+                      <span>Easy sharing with friends</span>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
@@ -212,7 +215,7 @@ export default function Home() {
                 </Card>
                 <Card>
                   <CardContent className="flex flex-col items-center space-y-2 p-6 text-center">
-                    <ImageIcon className="h-12 w-12 text-primary" />
+                    <AudioLines className="h-12 w-12 text-primary" />
                     <h3 className="text-xl font-bold">Voice Memos</h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       Capture the sounds and emotions of your memories with voice recordings.
@@ -229,14 +232,6 @@ export default function Home() {
                   </CardContent>
                 </Card>
               </div>
-            </div>
-          </div>
-        </section>
-        <section className="w-full py-12 md:py-24 lg:py-32 border-t">
-          <div className="container px-4 md:px-6 max-w-7xl mx-auto">
-            <h2 className="text-2xl font-bold mb-6">Pricing</h2>
-            <div className="grid gap-6 md:grid-cols-3">
-              {/* Pricing plans */}
             </div>
           </div>
         </section>
