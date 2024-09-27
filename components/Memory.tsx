@@ -93,11 +93,13 @@ const Memory: React.FC<MemoryProps> = ({ memory, onDelete }) => {
         <TooltipProvider>
           <Tooltip delayDuration={100}>
             <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <button className="p-1 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors" disabled={isDeleting}>
-                  <Trash2 size={20} className="text-gray-600" />
-                </button>
-              </AlertDialogTrigger>
+              <TooltipTrigger asChild>
+                <AlertDialogTrigger asChild>
+                  <button className="p-1 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors" disabled={isDeleting}>
+                    <Trash2 size={20} className="text-gray-600" />
+                  </button>
+                </AlertDialogTrigger>
+              </TooltipTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>Are you sure?</AlertDialogTitle>
