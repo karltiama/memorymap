@@ -46,6 +46,8 @@ const MemoryDetail: React.FC<MemoryDetailProps> = ({ memory }) => {
   };
 
   const tags = getTags(memory.tags);
+  const imageUrls = Array.isArray(memory.image_urls) ? memory.image_urls : 
+                  (typeof memory.image_urls === 'string' ? JSON.parse(memory.image_urls) : []);
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 md:py-20">
@@ -54,29 +56,38 @@ const MemoryDetail: React.FC<MemoryDetailProps> = ({ memory }) => {
         <div className="rounded-lg overflow-hidden h-[400px] sm:h-[500px]">
           <MemoryLocationMap latitude={memory.latitude} longitude={memory.longitude} />
         </div>
-        <div>
-          <Carousel
-            className="h-[400px] sm:h-[500px]"
-          >
+        <div className="relative">
+          <Carousel className="h-[400px] sm:h-[500px]">
             <CarouselContent>
-              {/* Replace with actual memory photos when available */}
-              {[1, 2, 3].map((_, index) => (
-                <CarouselItem key={index}>
-                  <div className="rounded-lg overflow-hidden h-full">
-                    <img
-                      src="/placeholder.svg"
-                      alt={`Memory Photo ${index + 1}`}
-                      width={800}
-                      height={500}
-                      className="w-full h-full object-cover"
-                      style={{ aspectRatio: "800/500", objectFit: "cover" }}
-                    />
+              {imageUrls.length > 0 ? (
+                imageUrls.map((url: string, index: number) => (
+                  <CarouselItem key={index}>
+                    <div className="rounded-lg overflow-hidden h-full">
+                      <img
+                        src={url}
+                        alt={`Memory Photo ${index + 1}`}
+                        width={800}
+                        height={500}
+                        className="w-full h-full object-cover"
+                        style={{ aspectRatio: "800/500", objectFit: "cover" }}
+                      />
+                    </div>
+                  </CarouselItem>
+                ))
+              ) : (
+                <CarouselItem>
+                  <div className="rounded-lg overflow-hidden h-full flex items-center justify-center bg-gray-200 text-gray-500">
+                    No photos available
                   </div>
                 </CarouselItem>
-              ))}
+              )}
             </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
+            {imageUrls.length > 1 && (
+              <>
+                <CarouselPrevious className="absolute left-2 top-1/2 -translate-y-1/2" />
+                <CarouselNext className="absolute right-2 top-1/2 -translate-y-1/2" />
+              </>
+            )}
           </Carousel>
         </div>
       </div>

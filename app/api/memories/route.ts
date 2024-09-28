@@ -7,7 +7,7 @@ export async function GET() {
   try {
     const { data: memories, error } = await supabase
       .from('memories')
-      .select('id, title, description, latitude, longitude, image_url')
+      .select('id, title, description, latitude, longitude, image_urls')
 
     if (error) {
       console.error('Error fetching memories:', error)
@@ -25,7 +25,7 @@ export async function POST(request: Request) {
   const supabase = createClient()
 
   try {
-    const { title, description, address, latitude, longitude, image_url, tags, memory_date } = await request.json()
+    const { title, description, address, latitude, longitude, image_urls, tags, memory_date } = await request.json()
 
     // Get the user ID from the session
     const { data: { user } } = await supabase.auth.getUser()
@@ -43,9 +43,9 @@ export async function POST(request: Request) {
         address,
         latitude,
         longitude,
-        image_url,
+        image_urls,
         tags,
-        memory_date // This will now be a formatted date string
+        memory_date
       })
       .select()
 
