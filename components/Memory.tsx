@@ -41,6 +41,7 @@ const Memory: React.FC<MemoryProps> = ({ memory, onDelete }) => {
       toast({
         title: "Memory deleted",
         description: "The memory has been successfully deleted.",
+        className: "bg-white dark:bg-background",
       });
     } catch (error) {
       console.error('Error deleting memory:', error);
@@ -64,7 +65,7 @@ const Memory: React.FC<MemoryProps> = ({ memory, onDelete }) => {
   const tags = getTags(memory.tags);
 
   return (
-    <div className="group relative rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-[1.02]">
+    <div className="group relative rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-[1.02] h-[400px] flex flex-col">
       {/* Tags */}
       <div className="absolute top-2 left-2 z-10 flex flex-wrap gap-2">
         {tags.map((tag, index) => (
@@ -100,7 +101,7 @@ const Memory: React.FC<MemoryProps> = ({ memory, onDelete }) => {
                   </button>
                 </AlertDialogTrigger>
               </TooltipTrigger>
-              <AlertDialogContent>
+              <AlertDialogContent className="bg-white">
                 <AlertDialogHeader>
                   <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                   <AlertDialogDescription>
@@ -109,7 +110,7 @@ const Memory: React.FC<MemoryProps> = ({ memory, onDelete }) => {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDelete} disabled={isDeleting}>
+                  <AlertDialogAction onClick={handleDelete} disabled={isDeleting} className="bg-red-500 hover:bg-red-600">
                     {isDeleting ? 'Deleting...' : 'Delete'}
                   </AlertDialogAction>
                 </AlertDialogFooter>
@@ -122,23 +123,18 @@ const Memory: React.FC<MemoryProps> = ({ memory, onDelete }) => {
         </TooltipProvider>
       </div>
 
-      <div className="relative h-[300px] w-full">
+      <div className="relative h-[300px] w-full flex-shrink-0">
         <StaticMap
           latitude={memory.latitude}
           longitude={memory.longitude}
           zoom={14}
         />
       </div>
-      <div className="p-4 bg-card text-card-foreground">
-        <h3 className="text-xl font-semibold">{memory.title}</h3>
-        <p className="text-sm text-muted-foreground mt-2">
-          {memory.description.length > 150 
-            ? `${memory.description.substring(0, 150)}...` 
-            : memory.description}
-        </p>
+      <div className="p-4 bg-card text-card-foreground flex flex-col justify-between flex-grow">
+        <h3 className="text-xl font-semibold truncate">{memory.title}</h3>
         <Link 
           href={`/memories/${memory.id}`} 
-          className="mt-4 inline-block text-blue-500 hover:underline"
+          className="mt-2 inline-block text-blue-500 hover:underline"
         >
           View Details
         </Link>

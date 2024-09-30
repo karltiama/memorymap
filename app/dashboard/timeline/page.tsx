@@ -21,7 +21,7 @@ export default async function TimelinePage() {
       <div className="space-y-8">
         {memories && memories.length > 0 ? (
           memories.map((memory: MemoryData) => (
-            <div key={memory.id} className="bg-white p-4 rounded-lg shadow">
+            <div key={memory.id} className="bg-background dark:bg-background p-4 rounded-lg shadow">
               <h2 className="text-xl font-semibold mb-2">{memory.title}</h2>
               <p className="text-gray-600 mb-2">{new Date(memory.memory_date).toLocaleDateString()}</p>
               <p className="text-gray-800">{memory.description}</p>

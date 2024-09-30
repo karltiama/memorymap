@@ -66,7 +66,7 @@ const InteractiveMap: React.FC = () => {
             anchor="bottom"
             offset={[0, -15]}
           >
-            <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg">
+            <div className="bg-background dark:bg-background p-3 rounded-lg shadow-lg">
               <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                 Click anywhere to add a memory!
               </p>
@@ -114,7 +114,7 @@ export default function Home() {
                   <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none text-center">
                     Pin Your Memories on the Map with Memory Mapper.
                   </h1>
-                  <p className="max-w-[600px] text-muted-foreground md:text-xl text-center">
+                  <p className="max-w-[600px] text-muted-foreground md:text-xl text-center mx-auto">
                     Create digital notes of your memories and pin them on an interactive map. Relive your experiences, share your stories, and never forget that special moment.
                   </p>
                 </div>
@@ -185,7 +185,7 @@ export default function Home() {
         <section className="w-full py-12 md:py-24 lg:py-32">
           <div className="container px-4 md:px-6 max-w-7xl mx-auto">
             <div className="grid items-center gap-6 lg:grid-cols-[500px_1fr] lg:gap-12 xl:grid-cols-[550px_1fr]">
-              <div className="flex flex-col justify-center space-y-4">
+              <div className="flex flex-col justify-center space-y-4 text-center mx-auto"> {/* Added text-center here */}
                 <div className="space-y-2">
                   <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Digital Memory Notes</h2>
                   <p className="max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">

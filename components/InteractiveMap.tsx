@@ -45,7 +45,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ onLocationSelect }) => 
         mapboxToken={mapboxToken}
       />
       {isLoading && (
-        <div className="absolute top-0 left-0 right-0 bg-white bg-opacity-80 p-4 text-center">
+        <div className="absolute top-0 left-0 right-0 bg-background dark:bg-background bg-opacity-80 p-4 text-center">
           Loading memories...
         </div>
       )}

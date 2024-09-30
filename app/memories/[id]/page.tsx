@@ -6,7 +6,7 @@ export default async function MemoryPage({ params }: { params: { id: string } })
   const supabase = createClient()
   const { data: memory, error } = await supabase
     .from('memories')
-    .select('*')
+    .select('*, image_urls')
     .eq('id', params.id)
     .single()
 
