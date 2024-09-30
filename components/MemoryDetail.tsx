@@ -50,7 +50,7 @@ const MemoryDetail: React.FC<MemoryDetailProps> = ({ memory }) => {
                   (typeof memory.image_urls === 'string' ? JSON.parse(memory.image_urls) : []);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 md:py-20">
+    <div className="max-w-6xl mx-auto ">
       <h1 className="text-3xl sm:text-4xl font-bold mb-8">{memory.title}</h1>
       <div className="grid md:grid-cols-2 gap-8">
         <div className="rounded-lg overflow-hidden h-[400px] sm:h-[500px]">
@@ -112,7 +112,7 @@ const MemoryDetail: React.FC<MemoryDetailProps> = ({ memory }) => {
           <Link href="/dashboard">
             <Button variant="outline">Back to Dashboard</Button>
           </Link>
-          <Link href={`/memories/${memory.id}/edit`}>
+          <Link href={`/dashboard/memories/${memory.id}/edit`}>
             <Button>Edit Memory</Button>
           </Link>
         </div>

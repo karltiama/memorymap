@@ -133,7 +133,7 @@ const Memory: React.FC<MemoryProps> = ({ memory, onDelete }) => {
       <div className="p-4 bg-card text-card-foreground flex flex-col justify-between flex-grow">
         <h3 className="text-xl font-semibold truncate">{memory.title}</h3>
         <Link 
-          href={`/memories/${memory.id}`} 
+          href={`/dashboard/memories/${memory.id}`} 
           className="mt-2 inline-block text-blue-500 hover:underline"
         >
           View Details

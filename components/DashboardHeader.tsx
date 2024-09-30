@@ -38,7 +38,14 @@ export function DashboardHeader() {
   const pathname = usePathname()
   const supabase = createClient()
 
-  const pageInfo = pageInfoMap[pathname] || { title: 'Dashboard', description: 'Manage your memories and experiences.' }
+  const getPageInfo = (path: string): PageInfo => {
+    if (path.startsWith('/dashboard/memories/')) {
+      return { title: 'Memory', description: 'View details of your memory.' }
+    }
+    return pageInfoMap[path] || { title: 'Dashboard', description: 'Manage your memories and experiences.' }
+  }
+
+  const pageInfo = getPageInfo(pathname)
 
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut()
