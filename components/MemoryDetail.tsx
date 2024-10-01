@@ -7,11 +7,11 @@ import { Button } from './ui/button';
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
-import { Edit, Trash2, FolderPlus, Share2, MessageCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Edit, Trash2, FolderPlus, Share2, MessageCircle, ChevronLeft, ChevronRight, Expand } from 'lucide-react';
 import Map, { Marker } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import FullScreenGallery from './FullScreenGallery';
 
 interface MemoryDetailProps {
   memory: MemoryData;
@@ -21,6 +21,7 @@ const MemoryDetail: React.FC<MemoryDetailProps> = ({ memory }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showComments, setShowComments] = useState(false);
   const [newComment, setNewComment] = useState('');
+  const [isFullScreenOpen, setIsFullScreenOpen] = useState(false);
 
   const getTags = (tags: string | string[] | null): string[] => {
     if (!tags) return [];
@@ -146,7 +147,8 @@ const MemoryDetail: React.FC<MemoryDetailProps> = ({ memory }) => {
                   <img 
                     src={imageUrls[currentImageIndex]} 
                     alt={`Memory image ${currentImageIndex + 1}`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover cursor-pointer"
+                    onClick={() => setIsFullScreenOpen(true)}
                   />
                 ) : (
                   <div className="flex items-center justify-center h-full text-muted-foreground">
@@ -176,6 +178,15 @@ const MemoryDetail: React.FC<MemoryDetailProps> = ({ memory }) => {
                   </Button>
                 </>
               )}
+              <Button
+                variant="outline"
+                size="icon"
+                className="absolute bottom-2 right-2"
+                onClick={() => setIsFullScreenOpen(true)}
+              >
+                <Expand className="h-4 w-4" />
+                <span className="sr-only">View Full Screen</span>
+              </Button>
             </div>
           </div>
 
@@ -215,6 +226,12 @@ const MemoryDetail: React.FC<MemoryDetailProps> = ({ memory }) => {
           </div>
         </CardContent>
       </Card>
+      <FullScreenGallery
+        images={imageUrls}
+        initialIndex={currentImageIndex}
+        isOpen={isFullScreenOpen}
+        onClose={() => setIsFullScreenOpen(false)}
+      />
     </TooltipProvider>
   );
 };
