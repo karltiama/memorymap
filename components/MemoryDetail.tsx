@@ -1,44 +1,27 @@
 'use client'
 
-import React from 'react';
+import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { MemoryData } from '@/types/types';
 import { Button } from './ui/button';
-import Link from 'next/link';
 import { Badge } from "@/components/ui/badge";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Textarea } from "@/components/ui/textarea";
+import { Edit, Trash2, FolderPlus, Share2, MessageCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import Map, { Marker } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel"
 
 interface MemoryDetailProps {
   memory: MemoryData;
 }
 
-const MemoryLocationMap: React.FC<{ latitude: number; longitude: number }> = ({ latitude, longitude }) => {
-  const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
-
-  if (!mapboxToken) {
-    console.error('Mapbox access token is missing');
-    return <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-700">Map unavailable: Missing access token</div>;
-  }
-
-  return (
-    <Map
-      initialViewState={{
-        latitude: latitude,
-        longitude: longitude,
-        zoom: 14
-      }}
-      style={{width: '100%', height: '100%'}}
-      mapStyle="mapbox://styles/mapbox/streets-v11"
-      mapboxAccessToken={mapboxToken}
-    >
-      <Marker latitude={latitude} longitude={longitude} color="red" />
-    </Map>
-  );
-};
-
 const MemoryDetail: React.FC<MemoryDetailProps> = ({ memory }) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showComments, setShowComments] = useState(false);
+  const [newComment, setNewComment] = useState('');
+
   const getTags = (tags: string | string[] | null): string[] => {
     if (!tags) return [];
     if (typeof tags === 'string') return tags.split(',').map(tag => tag.trim());
@@ -49,75 +32,190 @@ const MemoryDetail: React.FC<MemoryDetailProps> = ({ memory }) => {
   const imageUrls = Array.isArray(memory.image_urls) ? memory.image_urls : 
                   (typeof memory.image_urls === 'string' ? JSON.parse(memory.image_urls) : []);
 
+  const nextImage = () => {
+    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % imageUrls.length);
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prevIndex) => (prevIndex - 1 + imageUrls.length) % imageUrls.length);
+  };
+
+  const editMemory = () => {
+    // Implement edit functionality
+  };
+
+  const deleteMemory = () => {
+    // Implement delete functionality
+  };
+
+  const addToCollection = () => {
+    // Implement add to collection functionality
+  };
+
+  const shareMemory = () => {
+    // Implement share functionality
+  };
+
+  const addComment = () => {
+    // Implement add comment functionality
+  };
+
   return (
-    <div className="max-w-6xl mx-auto ">
-      <h1 className="text-3xl sm:text-4xl font-bold mb-8">{memory.title}</h1>
-      <div className="grid md:grid-cols-2 gap-8">
-        <div className="rounded-lg overflow-hidden h-[400px] sm:h-[500px]">
-          <MemoryLocationMap latitude={memory.latitude} longitude={memory.longitude} />
-        </div>
-        <div className="relative">
-          <Carousel className="h-[400px] sm:h-[500px]">
-            <CarouselContent>
-              {imageUrls.length > 0 ? (
-                imageUrls.map((url: string, index: number) => (
-                  <CarouselItem key={index}>
-                    <div className="rounded-lg overflow-hidden h-full">
-                      <img
-                        src={url}
-                        alt={`Memory Photo ${index + 1}`}
-                        width={800}
-                        height={500}
-                        className="w-full h-full object-cover"
-                        style={{ aspectRatio: "800/500", objectFit: "cover" }}
-                      />
-                    </div>
-                  </CarouselItem>
-                ))
-              ) : (
-                <CarouselItem>
-                  <div className="rounded-lg overflow-hidden h-full flex items-center justify-center bg-gray-200 text-gray-500">
-                    No photos available
+    <TooltipProvider>
+      <Card className="w-full max-w-5xl mx-auto">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-3xl">{memory.title}</CardTitle>
+            <p className="text-lg text-muted-foreground">
+              {format(new Date(memory.memory_date), 'MMMM d, yyyy')}
+            </p>
+          </div>
+          {/* Memory Actions With Tooltips */}
+          <div className="flex items-center gap-2">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="icon" onClick={editMemory}>
+                  <Edit className="h-4 w-4" />
+                  <span className="sr-only">Edit Memory</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Edit Memory</p>
+              </TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="icon" onClick={deleteMemory}>
+                  <Trash2 className="h-4 w-4" />
+                  <span className="sr-only">Delete Memory</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Delete Memory</p>
+              </TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="icon" onClick={addToCollection}>
+                  <FolderPlus className="h-4 w-4" />
+                  <span className="sr-only">Add to Collection</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Add to Collection</p>
+              </TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="icon" onClick={shareMemory}>
+                  <Share2 className="h-4 w-4" />
+                  <span className="sr-only">Share Memory</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Share Memory</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Static Map */}
+            <div className="w-full h-64 bg-muted rounded-md overflow-hidden">
+              <Map
+                initialViewState={{
+                  latitude: memory.latitude,
+                  longitude: memory.longitude,
+                  zoom: 14
+                }}
+                style={{width: '100%', height: '100%'}}
+                mapStyle="mapbox://styles/mapbox/streets-v11"
+                mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
+              >
+                <Marker latitude={memory.latitude} longitude={memory.longitude} color="red" />
+              </Map>
+            </div>
+
+            {/* Image Carousel */}
+            <div className="relative">
+              <div className="w-full h-64 bg-muted rounded-md overflow-hidden">
+                {imageUrls.length > 0 ? (
+                  <img 
+                    src={imageUrls[currentImageIndex]} 
+                    alt={`Memory image ${currentImageIndex + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-full text-muted-foreground">
+                    No images available
                   </div>
-                </CarouselItem>
+                )}
+              </div>
+              {imageUrls.length > 1 && (
+                <>
+                  <Button 
+                    variant="outline" 
+                    size="icon" 
+                    className="absolute top-1/2 left-2 transform -translate-y-1/2"
+                    onClick={prevImage}
+                  >
+                    <ChevronLeft className="h-6 w-6" />
+                    <span className="sr-only">Previous Image</span>
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="icon" 
+                    className="absolute top-1/2 right-2 transform -translate-y-1/2"
+                    onClick={nextImage}
+                  >
+                    <ChevronRight className="h-6 w-6" />
+                    <span className="sr-only">Next Image</span>
+                  </Button>
+                </>
               )}
-            </CarouselContent>
-            {imageUrls.length > 1 && (
-              <>
-                <CarouselPrevious className="absolute left-2 top-1/2 -translate-y-1/2" />
-                <CarouselNext className="absolute right-2 top-1/2 -translate-y-1/2" />
-              </>
-            )}
-          </Carousel>
-        </div>
-      </div>
-      <div className="mt-12 space-y-6">
-        <p className="text-gray-600">
-          {format(new Date(memory.memory_date), 'MMMM d, yyyy')}
-        </p>
-        <p className="text-lg text-gray-700">{memory.description}</p>
-        {tags.length > 0 && (
-          <div className="mt-6">
-            <h2 className="text-xl font-semibold mb-2 text-gray-900">Tags</h2>
-            <div className="flex flex-wrap gap-2">
-              {tags.map((tag, index) => (
-                <Badge key={index} variant={index % 2 === 0 ? "default" : "secondary"}>
-                  {tag}
-                </Badge>
-              ))}
             </div>
           </div>
-        )}
-        <div className="flex justify-between items-center mt-6">
-          <Link href="/dashboard">
-            <Button variant="outline">Back to Dashboard</Button>
-          </Link>
-          <Link href={`/dashboard/memories/${memory.id}/edit`}>
-            <Button>Edit Memory</Button>
-          </Link>
-        </div>
-      </div>
-    </div>
+
+          {/* Description */}
+          <p className="text-lg">{memory.description}</p>
+
+          {/* Tags */}
+          <div className="flex flex-wrap gap-2">
+            {tags.map((tag, index) => (
+              <Badge key={index} variant="secondary" className="text-base px-3 py-1">{tag}</Badge>
+            ))}
+          </div>
+
+          {/* Comments Section */}
+          <div className="space-y-4">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowComments(!showComments)}
+              className="flex items-center gap-2"
+            >
+              <MessageCircle className="h-4 w-4" />
+              {showComments ? "Hide Comments" : "Show Comments"}
+            </Button>
+            {showComments && (
+              <div className="space-y-4">
+                {/* Implement comments rendering here */}
+                <div className="space-y-2">
+                  <Textarea
+                    placeholder="Add a comment..."
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                  />
+                  <Button onClick={addComment}>Post Comment</Button>
+                </div>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </TooltipProvider>
   );
 };
 

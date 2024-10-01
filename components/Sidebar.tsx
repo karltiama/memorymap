@@ -31,7 +31,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarExpanded, setSidebarExpanded }
     <TooltipProvider>
       <div
         className={cn(
-          "bg-background shadow-md transition-all duration-300 ease-in-out flex flex-col",
+          "bg-card text-white shadow-md transition-all duration-300 ease-in-out flex flex-col",
           sidebarExpanded ? "w-64" : "w-16"
         )}
       >
