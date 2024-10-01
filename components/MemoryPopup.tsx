@@ -1,30 +1,42 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Popup } from 'react-map-gl';
 import { MemoryData } from '@/types/types';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Heart, Share, Star } from 'lucide-react';
+import { Share, Star, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import Image from 'next/image';
 
 interface MemoryPopupProps {
   memory: MemoryData;
   onClose: () => void;
 }
 
+const MAX_DESCRIPTION_LENGTH = 100; // Set the maximum length for the description
+
+const truncateDescription = (description: string) => {
+  if (description.length > MAX_DESCRIPTION_LENGTH) {
+    return description.substring(0, MAX_DESCRIPTION_LENGTH) + '...';
+  }
+  return description;
+};
+
 const MemoryPopup: React.FC<MemoryPopupProps> = ({ memory, onClose }) => {
-  // const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
 
-  // Commented out for future implementation
-  // const nextPhoto = () => {
-  //   setCurrentPhotoIndex((prevIndex) => 
-  //     (prevIndex + 1) % memory.photos.length
-  //   );
-  // };
+  const imageUrls = Array.isArray(memory.image_urls) ? memory.image_urls : 
+                  (typeof memory.image_urls === 'string' ? JSON.parse(memory.image_urls) : []);
 
-  // const prevPhoto = () => {
-  //   setCurrentPhotoIndex((prevIndex) => 
-  //     (prevIndex - 1 + memory.photos.length) % memory.photos.length
-  //   );
-  // };
+  const nextPhoto = () => {
+    setCurrentPhotoIndex((prevIndex) => 
+      (prevIndex + 1) % imageUrls.length
+    );
+  };
+
+  const prevPhoto = () => {
+    setCurrentPhotoIndex((prevIndex) => 
+      (prevIndex - 1 + imageUrls.length) % imageUrls.length
+    );
+  };
 
   return (
     <Popup
@@ -35,25 +47,30 @@ const MemoryPopup: React.FC<MemoryPopupProps> = ({ memory, onClose }) => {
       closeButton={false}
       anchor="bottom"
       offset={[0, -10]}
+      className="custom-popup" // Add a custom class for styling
     >
-      <Card className="w-full max-w-sm">
+      <Card className="w-full max-w-sm overflow-hidden shadow-lg">
         <div className="relative">
-          <img
-            src="/placeholder.svg"
-            alt={memory.title}
-            className="w-full h-48 object-cover rounded-t-md"
-            width="200"
-            height="200"
-            style={{ aspectRatio: "200/200", objectFit: "cover" }}
-          />
+          {imageUrls.length > 0 ? (
+            <Image
+              src={imageUrls[currentPhotoIndex]}
+              alt={memory.title}
+              width={400}
+              height={300}
+              className="w-full h-48 object-cover"
+            />
+          ) : (
+            <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
+              <span className="text-gray-400">No image available</span>
+            </div>
+          )}
           <Button variant="ghost" size="icon" className="absolute top-2 right-2" onClick={onClose}>
-            <Heart className="w-6 h-6 text-white" />
+            <X className="w-6 h-6 text-white" />
           </Button>
           <Button variant="ghost" size="icon" className="absolute top-2 right-10">
             <Share className="w-6 h-6 text-white" />
           </Button>
-          {/* Commented out for future implementation
-          {memory.photos && memory.photos.length > 1 && (
+          {imageUrls.length > 1 && (
             <>
               <Button variant="ghost" size="icon" className="absolute top-1/2 left-2 transform -translate-y-1/2" onClick={prevPhoto}>
                 <ChevronLeft className="w-6 h-6 text-white" />
@@ -62,17 +79,16 @@ const MemoryPopup: React.FC<MemoryPopupProps> = ({ memory, onClose }) => {
                 <ChevronRight className="w-6 h-6 text-white" />
               </Button>
             </>
-          )} */}
+          )}
         </div>
-        <CardContent className="space-y-2">
+        <CardContent className="space-y-2 bg-white">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold">{memory.title}</h3>
             <div className="flex items-center space-x-1">
               <Star className="w-4 h-4 text-yellow-500" />
             </div>
           </div>
-          <p className="text-sm text-muted-foreground">{memory.description}</p>
-          
+          <p className="text-sm text-muted-foreground">{truncateDescription(memory.description)}</p>
         </CardContent>
       </Card>
     </Popup>

@@ -12,12 +12,15 @@ import { Edit, Trash2, FolderPlus, Share2, MessageCircle, ChevronLeft, ChevronRi
 import Map, { Marker } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import FullScreenGallery from './FullScreenGallery';
+import { useToast } from "@/hooks/use-toast"; // Correct import for Shadcn UI toast
 
 interface MemoryDetailProps {
   memory: MemoryData;
+  isSharedView?: boolean;
 }
 
-const MemoryDetail: React.FC<MemoryDetailProps> = ({ memory }) => {
+const MemoryDetail: React.FC<MemoryDetailProps> = ({ memory, isSharedView = false }) => {
+  const { toast } = useToast(); // Use the toast from the hook
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showComments, setShowComments] = useState(false);
   const [newComment, setNewComment] = useState('');
@@ -53,8 +56,29 @@ const MemoryDetail: React.FC<MemoryDetailProps> = ({ memory }) => {
     // Implement add to collection functionality
   };
 
-  const shareMemory = () => {
-    // Implement share functionality
+  const shareMemory = async () => {
+    try {
+      const response = await fetch(`/api/memories/${memory.id}/share`, {
+        method: 'POST',
+      });
+      const data = await response.json();
+      if (data.shareUrl) {
+        // Copy the share URL to clipboard
+        await navigator.clipboard.writeText(data.shareUrl);
+        toast({
+          title: "Share link copied!",
+          description: "The share link has been copied to your clipboard.",
+          variant: "default", // Use Shadcn UI's variant
+        });
+      }
+    } catch (error) {
+      console.error('Error sharing memory:', error);
+      toast({
+        title: "Error",
+        description: "Failed to generate share link. Please try again.",
+        variant: "destructive", // Use Shadcn UI's variant
+      });
+    }
   };
 
   const addComment = () => {
@@ -73,41 +97,45 @@ const MemoryDetail: React.FC<MemoryDetailProps> = ({ memory }) => {
           </div>
           {/* Memory Actions With Tooltips */}
           <div className="flex items-center gap-2">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" onClick={editMemory}>
-                  <Edit className="h-4 w-4" />
-                  <span className="sr-only">Edit Memory</span>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Edit Memory</p>
-              </TooltipContent>
-            </Tooltip>
+            {!isSharedView && (
+              <div className="flex items-center gap-2">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline" size="icon" onClick={editMemory}>
+                      <Edit className="h-4 w-4" />
+                      <span className="sr-only">Edit Memory</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Edit Memory</p>
+                  </TooltipContent>
+                </Tooltip>
 
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" onClick={deleteMemory}>
-                  <Trash2 className="h-4 w-4" />
-                  <span className="sr-only">Delete Memory</span>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Delete Memory</p>
-              </TooltipContent>
-            </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline" size="icon" onClick={deleteMemory}>
+                      <Trash2 className="h-4 w-4" />
+                      <span className="sr-only">Delete Memory</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Delete Memory</p>
+                  </TooltipContent>
+                </Tooltip>
 
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" onClick={addToCollection}>
-                  <FolderPlus className="h-4 w-4" />
-                  <span className="sr-only">Add to Collection</span>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Add to Collection</p>
-              </TooltipContent>
-            </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline" size="icon" onClick={addToCollection}>
+                      <FolderPlus className="h-4 w-4" />
+                      <span className="sr-only">Add to Collection</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Add to Collection</p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+            )}
 
             <Tooltip>
               <TooltipTrigger asChild>
@@ -132,7 +160,7 @@ const MemoryDetail: React.FC<MemoryDetailProps> = ({ memory }) => {
                   longitude: memory.longitude,
                   zoom: 14
                 }}
-                style={{width: '100%', height: '100%'}}
+                style={{ width: '100%', height: '100%' }}
                 mapStyle="mapbox://styles/mapbox/streets-v11"
                 mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
               >

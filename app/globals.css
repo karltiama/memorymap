@@ -83,3 +83,21 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+.custom-popup {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.custom-popup .mapboxgl-popup-content {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.custom-popup .mapboxgl-popup-tip {
+  display: none !important;
+}
