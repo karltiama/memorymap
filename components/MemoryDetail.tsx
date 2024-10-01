@@ -58,7 +58,7 @@ const MemoryDetail: React.FC<MemoryDetailProps> = ({ memory, isSharedView = fals
 
   const shareMemory = async () => {
     try {
-      const response = await fetch(`/api/memories/${memory.id}/share`, {
+      const response = await fetch(`/dashboard/memories/${memory.id}/share`, {
         method: 'POST',
       });
       const data = await response.json();
