@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -11,7 +11,8 @@ import { Button } from "@/components/ui/button";
 import { createClient } from '@/utils/supabase/client';
 import { DatePicker } from "@/components/DatePicker";
 import { format } from "date-fns";
-import { Plus, X } from "lucide-react"; // Import icons
+import { Plus, X, Upload } from "lucide-react"; // Import icons
+import { useDropzone } from 'react-dropzone';
 
 // Define the Zod schema
 const formSchema = z.object({
@@ -132,40 +133,39 @@ export function MemoryForm({ selectedLocation }: MemoryFormProps) {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const newPhotos = Array.from(e.target.files);
-      setSelectedPhotos(prevPhotos => [...prevPhotos, ...newPhotos]);
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
+    setSelectedPhotos(prevPhotos => [...prevPhotos, ...acceptedFiles]);
 
-      try {
-        const uploadedUrls = await Promise.all(newPhotos.map(async (photo) => {
-          const formData = new FormData();
-          formData.append('file', photo);
+    try {
+      const uploadedUrls = await Promise.all(acceptedFiles.map(async (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
 
-          const response = await fetch('/api/upload', {
-            method: 'POST',
-            body: formData,
-          });
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
 
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(`Failed to upload image: ${errorData.error || response.statusText}`);
-          }
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(`Failed to upload image: ${errorData.error || response.statusText}`);
+        }
 
-          const { url } = await response.json();
-          return url;
-        }));
+        const { url } = await response.json();
+        return url;
+      }));
 
-        setFormData(prevData => ({
-          ...prevData,
-          image_urls: [...(prevData.image_urls || []), ...uploadedUrls],
-        }));
-      } catch (error) {
-        console.error('Error uploading image:', error);
-        // You can set an error state here to display to the user
-      }
+      setFormData(prevData => ({
+        ...prevData,
+        image_urls: [...(prevData.image_urls || []), ...uploadedUrls],
+      }));
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      // You can set an error state here to display to the user
     }
-  };
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
   const removePhoto = (index: number) => {
     setSelectedPhotos(prevPhotos => prevPhotos.filter((_, i) => i !== index));
@@ -227,27 +227,15 @@ export function MemoryForm({ selectedLocation }: MemoryFormProps) {
               {errors.memory_date && <p className="text-red-500 text-sm">{errors.memory_date}</p>}
             </div>
             <div className="grid gap-2">
-              <div className="flex justify-center">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => document.getElementById('photos')?.click()}
-                  className="flex items-center justify-center"
-                  aria-label="Add Photos"
-                >
-                  <Plus className="mr-2 h-4 w-4" /> Add Photos
-                </Button>
+              <div {...getRootProps()} className={`border-2 border-dashed rounded-md p-4 text-center cursor-pointer ${isDragActive ? 'border-primary' : 'border-gray-300'}`}>
+                <input {...getInputProps()} />
+                <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                {isDragActive ? (
+                  <p>Drop the files here ...</p>
+                ) : (
+                  <p>Drag 'n' drop some files here, or click to select files</p>
+                )}
               </div>
-              <Input
-                id="photos"
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleFileChange}
-                className="hidden"
-                aria-label="Upload Photos"
-              />
               {selectedPhotos.length > 0 && (
                 <div className="mt-2 space-y-1 max-h-24 overflow-y-auto">
                   {selectedPhotos.map((photo, index) => (

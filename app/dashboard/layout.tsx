@@ -1,11 +1,12 @@
 'use client'
 
+import React from 'react';
 import { useState } from 'react';
 import Sidebar from '@/components/Sidebar';
 import { DashboardHeader } from '@/components/DashboardHeader';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const [sidebarExpanded, setSidebarExpanded] = useState(true);
+  const [sidebarExpanded, setSidebarExpanded] = useState(false);
 
   return (
     <div className="flex h-screen bg-background">
@@ -13,12 +14,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         sidebarExpanded={sidebarExpanded} 
         setSidebarExpanded={setSidebarExpanded}
       />
-      <main className="flex-1 overflow-y-auto">
+      <div className="flex-1 flex flex-col overflow-hidden">
         <DashboardHeader />
-        <div className="p-8">
-          {children}
-        </div>
-      </main>
+        <main className="flex-1 overflow-y-auto p-4">
+          {React.Children.map(children, (child) => 
+            React.isValidElement(child) && typeof child.type !== 'string'
+              ? React.cloneElement(child, { sidebarExpanded } as React.ComponentProps<typeof child.type>)
+              : child
+          )}
+        </main>
+      </div>
     </div>
   );
 }
