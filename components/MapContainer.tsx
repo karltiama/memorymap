@@ -21,9 +21,9 @@ const MapContainer: React.FC<MapContainerProps> = ({ memories, onLocationSelect,
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResult, setSearchResult] = useState<{ longitude: number; latitude: number } | null>(null);
 
-  const MIN_ZOOM_FOR_NEW_MEMORY = 10;
+  const MIN_ZOOM_FOR_NEW_MEMORY = 13;
   const NEARBY_THRESHOLD = 0.01;
-  const FREE_PLACEMENT_ZOOM = 16;
+  const FREE_PLACEMENT_ZOOM = 13;
 
   const handleClick = useCallback((event: any) => {
     const { lng, lat } = event.lngLat;
@@ -77,12 +77,26 @@ const MapContainer: React.FC<MapContainerProps> = ({ memories, onLocationSelect,
       const data = await response.json();
       if (data.features && data.features.length > 0) {
         const [lng, lat] = data.features[0].center;
-        setSearchResult({ longitude: lng, latitude: lat });
+        
+        // Determine the appropriate zoom level
+        const newZoom = Math.max(MIN_ZOOM_FOR_NEW_MEMORY, viewState.zoom);
+        
         setViewState({
           longitude: lng,
           latitude: lat,
-          zoom: 10,
+          zoom: newZoom,
         });
+
+        // Clear any previously selected location
+        setSelectedLocation(null);
+
+        // Only allow setting a new marker if the zoom level is appropriate
+        if (newZoom >= MIN_ZOOM_FOR_NEW_MEMORY) {
+          setSelectedLocation({ longitude: lng, latitude: lat });
+          if (onLocationSelect) {
+            onLocationSelect(lng, lat);
+          }
+        }
       }
     } catch (error) {
       console.error('Error searching for city:', error);
@@ -120,7 +134,7 @@ const MapContainer: React.FC<MapContainerProps> = ({ memories, onLocationSelect,
         <NavigationControl position="top-right" />
         
         {/* Map Stats */}
-        <div className="absolute top-2 right-14 bg-white p-2 rounded shadow-md text-xs">
+        <div className="absolute top-2 right-14 bg-white p-2 rounded shadow-md text-xs text-gray-800">
           <div>Longitude: {viewState.longitude.toFixed(4)}</div>
           <div>Latitude: {viewState.latitude.toFixed(4)}</div>
           <div>Zoom: {viewState.zoom.toFixed(2)}</div>
@@ -157,12 +171,12 @@ const MapContainer: React.FC<MapContainerProps> = ({ memories, onLocationSelect,
         )}
       </Map>
       {viewState.zoom < MIN_ZOOM_FOR_NEW_MEMORY && (
-        <div className="absolute bottom-4 left-4 bg-white p-2 rounded shadow">
+        <div className="absolute bottom-4 left-4 bg-white p-2 rounded shadow text-gray-800">
           Zoom in to add a new memory
         </div>
       )}
       {viewState.zoom >= FREE_PLACEMENT_ZOOM && (
-        <div className="absolute bottom-4 left-4 bg-white p-2 rounded shadow">
+        <div className="absolute bottom-4 left-4 bg-white p-2 rounded shadow text-gray-800">
           You can now place a memory anywhere on the map
         </div>
       )}

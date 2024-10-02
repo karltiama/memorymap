@@ -1,8 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { format, addYears, subYears } from "date-fns"
-import { Calendar as CalendarIcon, ChevronDown } from "lucide-react"
+import { Calendar as CalendarIcon } from "lucide-react"
+import { format, setYear } from "date-fns"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -26,25 +26,39 @@ interface DatePickerProps {
 }
 
 export function DatePicker({ date, setDate }: DatePickerProps) {
-  const [selectedYear, setSelectedYear] = React.useState<number>(date?.getFullYear() || new Date().getFullYear())
+  const [month, setMonth] = React.useState<Date>(date || new Date())
+  const [isCalendarOpen, setIsCalendarOpen] = React.useState(false)
 
   const years = React.useMemo(() => {
     const currentYear = new Date().getFullYear()
     return Array.from({ length: 100 }, (_, i) => currentYear - i)
   }, [])
 
-  const handleYearChange = (year: string) => {
-    const newYear = parseInt(year)
-    setSelectedYear(newYear)
+  React.useEffect(() => {
     if (date) {
-      const newDate = new Date(date)
-      newDate.setFullYear(newYear)
-      setDate(newDate)
+      setMonth(date)
+    }
+  }, [date])
+
+  const handleYearChange = (selectedYear: string) => {
+    const newYear = parseInt(selectedYear)
+    const newMonth = setYear(month, newYear)
+    setMonth(newMonth)
+    if (date) {
+      setDate(setYear(date, newYear))
     }
   }
 
+  const handleDateSelect = (newDate: Date | undefined) => {
+    setDate(newDate)
+    if (newDate) {
+      setMonth(newDate)
+    }
+    setIsCalendarOpen(false)
+  }
+
   return (
-    <Popover>
+    <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
       <PopoverTrigger asChild>
         <Button
           variant={"outline"}
@@ -58,18 +72,11 @@ export function DatePicker({ date, setDate }: DatePickerProps) {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
-        <Calendar
-          mode="single"
-          selected={date}
-          onSelect={setDate}
-          initialFocus
-          defaultMonth={date || new Date(selectedYear, 0)}
-        />
-        <div className="flex flex-col items-center p-2">
-          <p className="text-sm text-muted-foreground mb-2">Select a different year</p>
-          <Select onValueChange={handleYearChange} value={selectedYear.toString()}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select year" />
+        <div className="flex justify-between items-center p-3 border-b">
+          <h3 className="font-semibold">Select Date</h3>
+          <Select onValueChange={handleYearChange} value={month.getFullYear().toString()}>
+            <SelectTrigger className="w-[100px]">
+              <SelectValue placeholder="Year" />
             </SelectTrigger>
             <SelectContent>
               {years.map((year) => (
@@ -80,6 +87,14 @@ export function DatePicker({ date, setDate }: DatePickerProps) {
             </SelectContent>
           </Select>
         </div>
+        <Calendar
+          mode="single"
+          selected={date}
+          onSelect={handleDateSelect}
+          month={month}
+          onMonthChange={setMonth}
+          initialFocus
+        />
       </PopoverContent>
     </Popover>
   )

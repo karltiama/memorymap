@@ -9,6 +9,7 @@ import React, { useState, useCallback } from 'react';
 import Map, { MapLayerMouseEvent, Marker, Popup } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Card, CardContent } from "@/components/ui/card";
+import FAQAccordion from "@/components/FAQAccordion";
 
 interface MarkerType {
   longitude: number;
@@ -235,15 +236,14 @@ export default function Home() {
             </div>
           </div>
         </section>
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
+        <section className="w-full py-12 md:py-24 lg:py-32 bg-gray-100">
           <div className="container px-4 md:px-6 max-w-7xl mx-auto">
-            <h2 className="text-2xl font-bold mb-6">FAQ</h2>
             <div className="grid gap-6">
-              {/* FAQ items */}
+              <FAQAccordion />
             </div>
           </div>
         </section>
-        <section className="w-full py-12 md:py-24 lg:py-32 border-t">
+        <section className="w-full py-12 md:py-24 lg:py-32">
           <div className="container px-4 md:px-6 max-w-7xl mx-auto">
             <h2 className="text-2xl font-bold mb-6">Contact Us</h2>
             <form className="grid gap-6">
@@ -252,7 +252,7 @@ export default function Home() {
           </div>
         </section>
       </main>
-      <footer className="w-full py-6 border-t">
+      <footer className="w-full py-6">
         <div className="container px-4 md:px-6 max-w-7xl mx-auto flex flex-col gap-2 sm:flex-row items-center">
           <p className="text-xs text-muted-foreground">&copy; 2024 MemoryMap. All rights reserved.</p>
           <nav className="sm:ml-auto flex gap-4 sm:gap-6">
