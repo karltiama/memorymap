@@ -6,7 +6,11 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 const InteractiveMap = lazy(() => import('@/components/InteractiveMap'))
 
-export default function CreateMemoryPage({ sidebarExpanded }: { sidebarExpanded: boolean }) {
+interface CreateMemoryPageProps {
+  sidebarExpanded: boolean;
+}
+
+export default function CreateMemoryPage({ sidebarExpanded }: CreateMemoryPageProps) {
   const [selectedLocation, setSelectedLocation] = useState<{ longitude: number; latitude: number } | null>(null);
 
   const handleLocationSelect = (lng: number, lat: number) => {
