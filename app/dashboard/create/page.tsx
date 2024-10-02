@@ -6,12 +6,9 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 const InteractiveMap = lazy(() => import('@/components/InteractiveMap'))
 
-interface CreateMemoryPageProps {
-  sidebarExpanded: boolean;
-}
-
-export default function CreateMemoryPage({ sidebarExpanded }: CreateMemoryPageProps) {
+export default function CreateMemoryPage() {
   const [selectedLocation, setSelectedLocation] = useState<{ longitude: number; latitude: number } | null>(null);
+  const sidebarExpanded = false; // Set this based on your application logic
 
   const handleLocationSelect = (lng: number, lat: number) => {
     setSelectedLocation({ longitude: lng, latitude: lat });
@@ -20,7 +17,7 @@ export default function CreateMemoryPage({ sidebarExpanded }: CreateMemoryPagePr
   return (
     <div className="flex h-full overflow-hidden">
       <div className="flex-grow flex">
-        <div className="flex-1 relative ml-4"> {/* Added ml-4 for left margin */}
+        <div className="flex-1 relative ml-4">
           <Suspense fallback={<Skeleton className="w-full h-full" />}>
             <InteractiveMap onLocationSelect={handleLocationSelect} />
           </Suspense>
