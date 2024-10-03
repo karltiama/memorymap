@@ -10,7 +10,7 @@ import Map, { MapLayerMouseEvent, Marker, Popup } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Card, CardContent } from "@/components/ui/card";
 import FAQAccordion from "@/components/FAQAccordion";
-
+import ContactForm from "@/components/ContactForm";
 interface MarkerType {
   longitude: number;
   latitude: number;
@@ -245,10 +245,7 @@ export default function Home() {
         </section>
         <section className="w-full py-12 md:py-24 lg:py-32">
           <div className="container px-4 md:px-6 max-w-7xl mx-auto">
-            <h2 className="text-2xl font-bold mb-6">Contact Us</h2>
-            <form className="grid gap-6">
-              {/* Contact form fields */}
-            </form>
+            <ContactForm />
           </div>
         </section>
       </main>

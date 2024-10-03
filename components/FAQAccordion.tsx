@@ -2,12 +2,14 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 
 export default function FAQAccordion() {
   return (
-    <div className="w-full max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-center">Frequently Asked Questions</h2>
+    <div className="w-full max-w-3xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold mb-6 text-center text-gray-900 dark:text-white">
+        Frequently Asked Questions
+      </h2>
       <Accordion type="single" collapsible className="w-full">
         <AccordionItem value="item-1">
-          <AccordionTrigger>How do I create a new memory on the map?</AccordionTrigger>
-          <AccordionContent>
+          <AccordionTrigger className="text-gray-800 dark:text-gray-200">How do I create a new memory on the map?</AccordionTrigger>
+          <AccordionContent className="text-gray-700 dark:text-gray-300">
             To create a new memory, simply click on the map at the location you want to add the memory. A popup will appear where you can enter details about your memory, including title, description, and the option to upload photos.
           </AccordionContent>
         </AccordionItem>
