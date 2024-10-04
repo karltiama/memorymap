@@ -21,11 +21,11 @@ export default function BottomNav() {
     <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-primary border-t border-border" role="navigation">
       <div className="max-w-md mx-auto px-4 py-2">
         <ul className="flex items-center justify-between relative">
-          <NavItem href="/all" icon={Grid} label="All" />
-          <NavItem href="/collection" icon={Image} label="Collection" />
+          <NavItem href="/dashboard" icon={Grid} label="All" />
+          <NavItem href="/dashboard/collections" icon={Image} label="Collection" />
           <li className="-mt-8">
             <Link 
-              href="/new" 
+              href="/dashboard/create" 
               className="border border-white absolute left-1/2 -translate-x-1/2 -top-8 inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 transition-colors" 
               aria-label="Add New Memory"
             >
@@ -33,8 +33,8 @@ export default function BottomNav() {
               <span className="sr-only">Add New Memory</span>
             </Link>
           </li>
-          <NavItem href="/places" icon={MapPin} label="Places" />
-          <NavItem href="/timeline" icon={Clock} label="Timeline" />
+          <NavItem href="/dashboard/places" icon={MapPin} label="Places" />
+          <NavItem href="/dashboard/timeline" icon={Clock} label="Timeline" />
         </ul>
       </div>
     </nav>

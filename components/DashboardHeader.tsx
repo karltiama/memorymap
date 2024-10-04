@@ -4,6 +4,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 import { Button } from '@/components/ui/button'
 import { ModeToggle } from '@/components/ModeToggle'
+import { LogOut } from 'lucide-react' // Import the LogOut icon
 
 interface PageInfo {
   title: string;
@@ -58,16 +59,24 @@ export function DashboardHeader() {
 
   return (
     <header className="bg-background text-foreground shadow-sm z-10">
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <div className="flex flex-col items-center justify-center text-center">
-          <h1 className="text-3xl font-bold tracking-tight">{pageInfo.title}</h1>
-          <p className="text-muted-foreground">{pageInfo.description}</p>
-        </div>
-        <div className="flex items-center space-x-4">
-          <Button variant="outline" onClick={handleSignOut}>
-            Sign Out
-          </Button>
-          <ModeToggle />
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex justify-between items-start">
+          <div className="flex flex-col items-start">
+            <h1 className="text-3xl font-bold tracking-tight">{pageInfo.title}</h1>
+            <p className="text-muted-foreground">{pageInfo.description}</p>
+          </div>
+          <div className="flex flex-col items-end space-y-2">
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={handleSignOut} 
+              aria-label="Sign Out"
+              className="h-8 w-8"
+            >
+              <LogOut className="h-5 w-5" />
+            </Button>
+            <ModeToggle />
+          </div>
         </div>
       </div>
     </header>
