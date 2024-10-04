@@ -11,6 +11,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { Card, CardContent } from "@/components/ui/card";
 import FAQAccordion from "@/components/FAQAccordion";
 import ContactForm from "@/components/ContactForm";
+import { Header } from "@/components/Header";
 interface MarkerType {
   longitude: number;
   latitude: number;
@@ -86,26 +87,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-[100dvh]">
       {/* Header - Make this a component */}
-      <header className="px-4 lg:px-6 h-14 flex items-center max-w-7xl mx-auto w-full">
-        <Link href="#" className="flex items-center justify-center" prefetch={false}>
-          <MapIcon className="h-6 w-6" />
-          <span className="sr-only">MemoryMap</span>
-        </Link>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
-          <Link href="#" className="text-lg font-medium hover:underline underline-offset-4" prefetch={false}>
-            Features
-          </Link>
-          <Link href="#" className="text-lg font-medium hover:underline underline-offset-4" prefetch={false}>
-            Pricing
-          </Link>
-          <Link href="#" className="text-lg font-medium hover:underline underline-offset-4" prefetch={false}>
-            About
-          </Link>
-          <Link href="#" className="text-lg font-medium hover:underline underline-offset-4" prefetch={false}>
-            Contact
-          </Link>
-        </nav>
-      </header>
+      <Header />
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32">
           <div className="container px-4 md:px-6 max-w-7xl mx-auto">
