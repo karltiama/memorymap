@@ -57,16 +57,18 @@ export function DashboardHeader() {
   }
 
   return (
-    <header className="flex items-center justify-between p-4 bg-background text-foreground shadow-sm">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">{pageInfo.title}</h1>
-        <p className="text-muted-foreground">{pageInfo.description}</p>
-      </div>
-      <div className="flex items-center space-x-4">
-        <Button variant="outline" onClick={handleSignOut}>
-          Sign Out
-        </Button>
-        <ModeToggle />
+    <header className="bg-background text-foreground shadow-sm z-10">
+      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+        <div className="flex flex-col items-center justify-center text-center">
+          <h1 className="text-3xl font-bold tracking-tight">{pageInfo.title}</h1>
+          <p className="text-muted-foreground">{pageInfo.description}</p>
+        </div>
+        <div className="flex items-center space-x-4">
+          <Button variant="outline" onClick={handleSignOut}>
+            Sign Out
+          </Button>
+          <ModeToggle />
+        </div>
       </div>
     </header>
   )

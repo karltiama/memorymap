@@ -10,13 +10,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useSidebar } from '@/contexts/SidebarContext'; // Import the context
 
-interface SidebarProps {
-  sidebarExpanded: boolean;
-  setSidebarExpanded: (expanded: boolean) => void;
-}
-
-const Sidebar: React.FC<SidebarProps> = ({ sidebarExpanded, setSidebarExpanded }) => {
+const Sidebar: React.FC = () => {
+  const { sidebarExpanded, setSidebarExpanded } = useSidebar(); // Use context to get sidebar state
   const pathname = usePathname();
 
   const navItems = [
@@ -31,19 +28,20 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarExpanded, setSidebarExpanded }
     <TooltipProvider>
       <div
         className={cn(
-          "bg-primary text-white shadow-md transition-all duration-300 ease-in-out flex flex-col",
-          sidebarExpanded ? "w-64" : "w-16"
+          "bg-primary text-white shadow-md transition-all duration-300 ease-in-out flex flex-col h-full",
+          sidebarExpanded ? "w-64" : "w-16",
+          "hidden md:flex" // Hide on mobile, show on medium screens and up
         )}
       >
-        <div className="p-4 flex-grow">
+        <div className="p-4 flex flex-col h-full">
           <div className="flex items-center justify-between mb-4">
-            <div className={cn(!sidebarExpanded && "w-full")}> {/* Added this div */}
+            <div className={cn(!sidebarExpanded && "w-full")}>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => setSidebarExpanded(!sidebarExpanded)}
+                    onClick={() => setSidebarExpanded(!sidebarExpanded)} // Toggle sidebar state
                     aria-label={sidebarExpanded ? "Collapse sidebar" : "Expand sidebar"}
                     className={cn("h-8 w-8", !sidebarExpanded && "mx-auto")}
                   >
@@ -56,7 +54,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarExpanded, setSidebarExpanded }
               </Tooltip>
             </div>
           </div>
-          <div className="flex flex-col space-y-2">
+          <div className="flex flex-col space-y-2 flex-grow">
             {navItems.map(({ label, icon: Icon, href }) => (
               <Tooltip key={href}>
                 <TooltipTrigger asChild>
