@@ -21,22 +21,6 @@ export function Header() {
         <MapIcon className="h-6 w-6" />
         <span className="sr-only">MemoryMap</span>
       </Link>
-      <nav className="hidden md:flex items-center justify-center flex-1">
-        <div className="flex gap-6">
-          <Link href="#" className="text-lg font-medium hover:underline underline-offset-4" prefetch={false}>
-            Features
-          </Link>
-          <Link href="#" className="text-lg font-medium hover:underline underline-offset-4" prefetch={false}>
-            Pricing
-          </Link>
-          <Link href="#" className="text-lg font-medium hover:underline underline-offset-4" prefetch={false}>
-            About
-          </Link>
-          <Link href="#" className="text-lg font-medium hover:underline underline-offset-4" prefetch={false}>
-            Contact
-          </Link>
-        </div>
-      </nav>
       <Popover>
         <PopoverTrigger asChild>
           <Button variant="outline">Log In</Button>

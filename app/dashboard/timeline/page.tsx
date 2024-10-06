@@ -1,22 +1,46 @@
-import React from 'react';
-import { createClient } from '@/utils/supabase/server';
+'use client'
+
+import React, { useState } from 'react';
+import { createClient } from '@/utils/supabase/client';
 import { MemoryData } from '@/types/types';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown, Plus } from 'lucide-react';
 import Link from 'next/link';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
-export default async function TimelinePage() {
+export default function TimelinePage() {
+  const [memories, setMemories] = useState<MemoryData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
+
   const supabase = createClient();
 
-  const { data: memories, error } = await supabase
-    .from('memories')
-    .select('*')
-    .order('memory_date', { ascending: false });
+  React.useEffect(() => {
+    fetchMemories();
+  }, [sortOrder]);
 
-  if (error) {
-    console.error('Error fetching memories:', error);
-    return <div>Error loading timeline. Please try again later.</div>;
+  const fetchMemories = async () => {
+    setIsLoading(true);
+    const { data, error } = await supabase
+      .from('memories')
+      .select('*')
+      .order('memory_date', { ascending: sortOrder === 'asc' });
+
+    if (error) {
+      console.error('Error fetching memories:', error);
+    } else {
+      setMemories(data as MemoryData[]);
+    }
+    setIsLoading(false);
+  };
+
+  const toggleSortOrder = () => {
+    setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc');
+  };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
   }
 
   return (
@@ -24,13 +48,22 @@ export default async function TimelinePage() {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Memory Timeline</h2>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            className="flex items-center gap-2"
-          >
-            <ArrowUpDown className="h-4 w-4" />
-            Sort
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="flex items-center gap-2">
+                <ArrowUpDown className="h-4 w-4" />
+                Sort
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={() => setSortOrder('desc')}>
+                Newest First
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setSortOrder('asc')}>
+                Oldest First
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Link href="/dashboard/create">
             <Button className="flex items-center gap-2">
               <Plus className="h-4 w-4" />
