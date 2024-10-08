@@ -13,6 +13,7 @@ import Map, { Marker } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import FullScreenGallery from './FullScreenGallery';
 import { useToast } from "@/hooks/use-toast"; // Correct import for Shadcn UI toast
+import { AddToCollectionPopover } from './AddToCollectionPopover';
 
 interface MemoryDetailProps {
   memory: MemoryData;
@@ -52,9 +53,6 @@ const MemoryDetail: React.FC<MemoryDetailProps> = ({ memory, isSharedView = fals
     // Implement delete functionality
   };
 
-  const addToCollection = () => {
-    // Implement add to collection functionality
-  };
 
   const shareMemory = async () => {
     try {
@@ -124,12 +122,14 @@ const MemoryDetail: React.FC<MemoryDetailProps> = ({ memory, isSharedView = fals
                 </Tooltip>
 
                 <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="outline" size="icon" onClick={addToCollection}>
-                      <FolderPlus className="h-4 w-4" />
-                      <span className="sr-only">Add to Collection</span>
-                    </Button>
-                  </TooltipTrigger>
+                  <AddToCollectionPopover memoryId={memory.id}>
+                    <TooltipTrigger asChild>
+                      <Button variant="outline" size="icon">
+                        <FolderPlus className="h-4 w-4" />
+                        <span className="sr-only">Add to Collection</span>
+                      </Button>
+                    </TooltipTrigger>
+                  </AddToCollectionPopover>
                   <TooltipContent>
                     <p>Add to Collection</p>
                   </TooltipContent>

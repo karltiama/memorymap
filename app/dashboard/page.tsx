@@ -16,7 +16,7 @@ export default async function Dashboard() {
   }
 
   return (
-    <div className="p-6 space-y-6"> {/* Added padding here */}
+    <div className="p-6 space-y-6">
       {memories && memories.length > 0 ? (
         <MemoryList initialMemories={memories as MemoryData[]} />
       ) : (
