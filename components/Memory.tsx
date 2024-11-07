@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { MemoryData } from '@/types/types';
 import StaticMap from './StaticMap';
 import { Badge } from "@/components/ui/badge";
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, Loader2 } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -11,7 +11,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { AddToCollectionPopover } from './AddToCollectionPopover';
-import { useState } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import {
   AlertDialog,
@@ -28,14 +27,15 @@ import {
 interface MemoryProps {
   memory: MemoryData;
   onDelete: (id: string) => Promise<void>;
+  isDeleting?: boolean;
 }
 
-const Memory: React.FC<MemoryProps> = ({ memory, onDelete }) => {
+const Memory: React.FC<MemoryProps> = ({ memory, onDelete, isDeleting }) => {
   const { toast } = useToast();
-  const [isDeleting, setIsDeleting] = useState(false);
+
+  /*
 
   const handleDelete = async () => {
-    setIsDeleting(true);
     try {
       await onDelete(memory.id);
       toast({
@@ -50,10 +50,11 @@ const Memory: React.FC<MemoryProps> = ({ memory, onDelete }) => {
         description: "Failed to delete the memory. Please try again.",
         variant: "destructive",
       });
-    } finally {
-      setIsDeleting(false);
     }
   };
+  
+  */
+
 
   // Function to handle different tag formats
   const getTags = (tags: string | string[] | null): string[] => {
@@ -94,13 +95,18 @@ const Memory: React.FC<MemoryProps> = ({ memory, onDelete }) => {
         <TooltipProvider>
           <Tooltip delayDuration={100}>
             <AlertDialog>
-              <TooltipTrigger asChild>
-                <AlertDialogTrigger asChild>
-                  <button className="p-1 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors" disabled={isDeleting}>
+              <AlertDialogTrigger asChild>
+                <button 
+                  className="p-1 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors" 
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? (
+                    <Loader2 size={20} className="text-gray-600 animate-spin" />
+                  ) : (
                     <Trash2 size={20} className="text-gray-600" />
-                  </button>
-                </AlertDialogTrigger>
-              </TooltipTrigger>
+                  )}
+                </button>
+              </AlertDialogTrigger>
               <AlertDialogContent className="bg-white">
                 <AlertDialogHeader>
                   <AlertDialogTitle>Are you sure?</AlertDialogTitle>
@@ -110,7 +116,11 @@ const Memory: React.FC<MemoryProps> = ({ memory, onDelete }) => {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDelete} disabled={isDeleting} className="bg-red-500 hover:bg-red-600">
+                  <AlertDialogAction 
+                    onClick={() => onDelete(memory.id)} 
+                    disabled={isDeleting}
+                    className="bg-red-500 hover:bg-red-600"
+                  >
                     {isDeleting ? 'Deleting...' : 'Delete'}
                   </AlertDialogAction>
                 </AlertDialogFooter>
