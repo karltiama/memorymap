@@ -78,12 +78,14 @@ const Memory: React.FC<MemoryProps> = ({ memory, onDelete, isDeleting }) => {
 
       {/* Action Icons with Tooltips */}
       <div className="absolute top-2 right-2 z-20 flex gap-2">
+        {/* Add to Collection */}
         <TooltipProvider>
           <Tooltip delayDuration={100}>
+            {/* Add to Collection Popover - takes the memory id as a prop */}
             <AddToCollectionPopover memoryId={memory.id}>
               <TooltipTrigger asChild>
-                <button className="p-1 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors">
-                  <Plus size={20} className="text-gray-600" />
+                <button className="p-1 bg-white dark:bg-gray-800 rounded-full shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                  <Plus size={20} className="text-gray-600 dark:text-gray-300" />
                 </button>
               </TooltipTrigger>
             </AddToCollectionPopover>
@@ -92,34 +94,38 @@ const Memory: React.FC<MemoryProps> = ({ memory, onDelete, isDeleting }) => {
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
+
+        {/* Delete Memory */}
         <TooltipProvider>
           <Tooltip delayDuration={100}>
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <button 
-                  className="p-1 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors" 
+                  className="p-1 bg-white dark:bg-gray-800 rounded-full shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" 
                   disabled={isDeleting}
                 >
                   {isDeleting ? (
-                    <Loader2 size={20} className="text-gray-600 animate-spin" />
+                    <Loader2 size={20} className="text-gray-600 dark:text-gray-300 animate-spin" />
                   ) : (
-                    <Trash2 size={20} className="text-gray-600" />
+                    <Trash2 size={20} className="text-gray-600 dark:text-gray-300" />
                   )}
                 </button>
               </AlertDialogTrigger>
-              <AlertDialogContent className="bg-white">
+              <AlertDialogContent className="bg-white dark:bg-gray-800">
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
+                  <AlertDialogTitle className="dark:text-gray-100">Are you sure?</AlertDialogTitle>
+                  <AlertDialogDescription className="dark:text-gray-300">
                     This action cannot be undone. This will permanently delete your memory.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogCancel className="dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600">
+                    Cancel
+                  </AlertDialogCancel>
                   <AlertDialogAction 
                     onClick={() => onDelete(memory.id)} 
                     disabled={isDeleting}
-                    className="bg-red-500 hover:bg-red-600"
+                    className="bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700"
                   >
                     {isDeleting ? 'Deleting...' : 'Delete'}
                   </AlertDialogAction>
